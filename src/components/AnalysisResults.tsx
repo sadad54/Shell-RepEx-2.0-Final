@@ -542,6 +542,18 @@ import { ImageWithFallback } from './figma/ImageWithFallback'
 import { ExecutiveSummary } from './ExecutiveSummary'
 import { cn } from './ui/utils'
 import { mockIncidentImages } from '../assets/mockImages'
+const ASSETS = {
+  images: {
+    coupling: '/media/images/coupling_assembly.png',
+    degradation: '/media/images/degradation_indicators.png',
+    emergency: '/media/images/emergency_timeline.png',
+    environment: '/media/images/env_containment.png',
+  },
+  videos: {
+    problem: '/media/videos/incident_reconstruction.mp4',
+    solution: '/media/videos/mitigation_actions.mp4',
+  },
+}
 
 interface AnalysisResultsProps {
   files: Array<{ name: string; id: string }>
@@ -618,8 +630,8 @@ const analysisData = {
   ],
   media: {
     // Provide your actual URLs if you have processed videos; image placeholders keep UI intact.
-    problemVideoUrl: '',   // e.g., '/media/incident_reconstruction.mp4'
-    solutionVideoUrl: '',  // e.g., '/media/mitigation_plan.mp4'
+    problemVideoUrl: 'ASSETS.videos.problem',   // e.g., '/media/incident_reconstruction.mp4'
+    solutionVideoUrl: 'ASSETS.videos.solution',  // e.g., '/media/mitigation_plan.mp4'
   },
   conclusion:
     'The incident was precipitated by service-life overrun of a critical coupling and checklist gaps. Rapid ESD and containment prevented marine pollution and injuries. Immediate fleet-wide coupling governance, certification checks in SOPs, and CMMS alerting are essential to reduce recurrence risk (78%) and cost exposure (SGD 258k total).'
@@ -812,7 +824,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                         <div className="grid grid-cols-2 gap-3">
                           <div className="relative">
                             <ImageWithFallback 
-                              src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=80&w=1080&auto=format&fit=crop"
+                              src={ASSETS.images.coupling}
                               alt="Viking Johnson Series 27 coupling context"
                               className="w-full h-24 object-cover rounded-lg"
                             />
@@ -822,7 +834,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                           </div>
                           <div className="relative">
                             <ImageWithFallback 
-                              src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?q=80&w=1080&auto=format&fit=crop"
+                              src={ASSETS.images.degradation}
                               alt="Corrosion / fatigue indication concept"
                               className="w-full h-24 object-cover rounded-lg"
                             />
@@ -839,7 +851,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                         <p className="text-sm font-medium text-foreground mb-2">Incident Timeline:</p>
                         <div className="relative">
                           <ImageWithFallback 
-                            src="https://images.unsplash.com/photo-1603297809966-d5220d3bda4b?q=80&w=1080&auto=format&fit=crop"
+                            src={ASSETS.images.emergency}
                             alt="Emergency response timeline"
                             className="w-full h-32 object-cover rounded-lg"
                           />
@@ -858,7 +870,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                         <p className="text-sm font-medium text-foreground mb-2">Containment & Cleanup:</p>
                         <div className="relative">
                           <ImageWithFallback 
-                            src="https://images.unsplash.com/photo-1544207240-428d0a9b7e73?q=80&w=1080&auto=format&fit=crop"
+                            src={ASSETS.images.environment}
                             alt="Containment boom operations"
                             className="w-full h-32 object-cover rounded-lg"
                           />
