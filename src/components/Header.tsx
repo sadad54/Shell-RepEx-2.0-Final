@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import { mockIncidentImages } from '../assets/mockImages.ts'
 
 export function Header() {
   return (
@@ -80,7 +81,7 @@ export function Header() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center space-x-2 px-2">
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src="/placeholder-avatar.jpg" alt="Executive" />
+                  <AvatarImage src={mockIncidentImages.crane} alt="Executive" />
                   <AvatarFallback>EX</AvatarFallback>
                 </Avatar>
                 <ChevronDown className="w-4 h-4" />

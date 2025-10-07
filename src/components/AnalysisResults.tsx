@@ -541,6 +541,7 @@ import { Separator } from './ui/separator'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 import { ExecutiveSummary } from './ExecutiveSummary'
 import { cn } from './ui/utils'
+import { mockIncidentImages } from '../assets/mockImages'
 
 interface AnalysisResultsProps {
   files: Array<{ name: string; id: string }>
