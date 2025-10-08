@@ -44,7 +44,8 @@ import emergencyImg from '../assets/images/emergency_timeline.png'
 import environmentImg from '../assets/images/environment_containment.png'
 import predictiveImg from '../assets/images/predictive.png'
 import trainingImg from '../assets/images/training.png'
-
+import incidentVideo from '../assets/videos/incident_animation.mp4'
+import mitigationVideo from '../assets/videos/mitigation_animation.mp4'
 
 import {
   Collapsible,
@@ -64,7 +65,10 @@ const ASSETS = {
     training:trainingImg,
     predictive:predictiveImg
   },
- 
+ videos: {
+  incidentVideo: incidentVideo,
+  mitigationVideo: mitigationVideo
+ }
   
 }
 
@@ -287,10 +291,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
               </CardContent>
             </Card>
             <div className="space-y-4">
-  <IframeInfographicCard
-    title="Problem Illustration – Incident Reconstruction"
-    src="/infographics/incident/index.html?theme=default"
-  />
+  <video src={ASSETS.videos.incidentVideo}  />
   </div>
 
             {/* Key Findings */}
@@ -384,10 +385,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
 {/* Animated & illustrative infographic cards */}
 
   <div className="space-y-4">
-  <IframeInfographicCard
-    title="Mitigation Path – Corrective & Preventive Actions"
-    src="/infographics/mitigation/index.html?theme=default"
-  />
+  <video  src={ASSETS.videos.mitigationVideo}/>
 </div>
             {/* Key Metrics */}
             <Card className="glass-card glass-card-hover shell-accent-medium border-0">
