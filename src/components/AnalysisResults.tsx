@@ -385,12 +385,12 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
 
             {/* New: Two vertical videos under Key Findings (Problem → Mitigation) */}
 {/* Animated & illustrative infographic cards */}
-
+<Card>
   <div className="space-y-4">
- <video className="w-full rounded-lg" controls playsInline preload="metadata" >
+ <CardTitle>Response Animation</CardTitle><video className="w-full rounded-lg" controls playsInline preload="metadata" >
   <source src={ASSETS.videos.mitigationVideo} type="video/mp4" />
 </video>
-</div>
+</div></Card>
             {/* Key Metrics */}
             <Card className="glass-card glass-card-hover shell-accent-medium border-0">
               <CardHeader>
