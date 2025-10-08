@@ -37,7 +37,6 @@ import { Slider } from './ui/slider'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 import { ExecutiveSummary } from './ExecutiveSummary'
 import { cn } from './ui/utils'
-import { mockIncidentImages } from '../assets/mockImages'
 import { publicUrl } from '../lib/asset' // or '../lib/asset' if not using '@'
 import couplingImg from '../assets/images/coupling_assembly.png'
 import degradationImg from '../assets/images/degradation_indicators.png'
@@ -45,16 +44,14 @@ import emergencyImg from '../assets/images/emergency_timeline.png'
 import environmentImg from '../assets/images/environment_containment.png'
 import predictiveImg from '../assets/images/predictive.png'
 import trainingImg from '../assets/images/training.png'
-import problemVideo from '../assets/videos/incident_reconstruction.mp4'
-import solutionVideo from '../assets/videos/mitigation_actions.mp4'
-import reconstructionVideo from '../assets/videos/3d_reconstruction.mp4'
-import reconstructionVideo2 from '../assets/videos/3d_reconstruction_v2.mp4'
+
 
 import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent
 } from './ui/collapsible'
+import { IframeInfographicCard } from './IframeInfographicCard'
 
 
 
@@ -67,12 +64,7 @@ const ASSETS = {
     training:trainingImg,
     predictive:predictiveImg
   },
-  videos: {
-    problem: problemVideo,
-    solution: solutionVideo,
-    reconstruction: reconstructionVideo,
-    reconstructionVideo2: reconstructionVideo2
-  },
+ 
   
 }
 
@@ -157,7 +149,8 @@ const analysisData = {
     reconstructionVideo2: 'ASSETS.videos.3d_reconstructionv2'  // e.g., '/media/mitigation_plan.mp4'
   },
   conclusion:
-    'The incident was precipitated by service-life overrun of a critical coupling and checklist gaps. Rapid ESD and containment prevented marine pollution and injuries. Immediate fleet-wide coupling governance, certification checks in SOPs, and CMMS alerting are essential to reduce recurrence risk (78%) and cost exposure (SGD 258k total).'
+    'The incident was precipitated by service-life overrun of a critical coupling and checklist gaps. Rapid ESD and containment prevented marine pollution and injuries. Immediate fleet-wide coupling governance, certification checks in SOPs, and CMMS alerting are essential to reduce recurrence risk (78%) and cost exposure (SGD 258k total).',
+  executiveSummary: 'The analysis identified key root causes, response effectiveness, and actionable recommendations to mitigate future risks. Immediate actions include emergency coupling replacements, SOP updates, and CMMS alerting. Long-term strategies involve IoT monitoring and predictive maintenance to enhance asset reliability and safety culture.'
 }
 
 export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
@@ -185,7 +178,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold text-foreground">Analysis Complete</h2>
+          <h2 className="text-2xl font-bold text-foreground">Key Findings</h2>
           <p className="text-muted-foreground">
             Analysis completed for {files.length} file{files.length > 1 ? 's' : ''} • {new Date().toLocaleString()}
           </p>
@@ -193,7 +186,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
           <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-sm">
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-foreground/80" />
-              <span className="font-medium">{analysisData.meta.reportName || files[0]?.name}</span>
+              <span className="font-bold">{analysisData.meta.reportName || files[0]?.name}</span>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="rounded-md">
@@ -283,57 +276,29 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Key Metrics */}
-            <Card className="glass-card glass-card-hover shell-accent-medium border-0">
+ <Card className="glass-card glass-card-hover border-0">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 interactive-icon" />
-                  <span>Analysis Summary</span>
-                </CardTitle>
+                <CardTitle>Executive Summary</CardTitle>
               </CardHeader>
               <CardContent className="relative z-10">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="text-center space-y-2 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
-                    <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
-                    <p className="text-2xl font-bold text-destructive">{analysisData.summary.severity}</p>
-                    <p className="text-sm text-muted-foreground">Severity Level</p>
-                  </div>
-                  <div className="text-center space-y-2 p-4 bg-accent/10 rounded-lg border border-accent/30">
-                    <Target className="w-8 h-8 text-accent-foreground mx-auto" />
-                    <p className="text-2xl font-bold text-accent-foreground">{analysisData.summary.riskScore}</p>
-                    <p className="text-sm text-muted-foreground">Recurrence Risk</p>
-                  </div>
-                  <div className="text-center space-y-2 p-4 bg-primary/10 rounded-lg border border-primary/20">
-                    <CheckCircle className="w-8 h-8 text-primary mx-auto" />
-                    <p className="text-2xl font-bold text-primary">{analysisData.summary.confidence}%</p>
-                    <p className="text-sm text-muted-foreground">Confidence</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Estimated Cost:</span>
-                    <span className="font-medium">{analysisData.summary.estimatedCost}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Time to Resolve:</span>
-                    <span className="font-medium">{analysisData.summary.timeToResolve}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Affected Personnel:</span>
-                    <span className="font-medium">{analysisData.summary.affectedPersonnel}</span>
-                  </div>
-                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {analysisData.executiveSummary}
+                </p>
               </CardContent>
             </Card>
+            <div className="space-y-4">
+  <IframeInfographicCard
+    title="Problem Illustration – Incident Reconstruction"
+    src="/infographics/incident/index.html?theme=default"
+  />
+  </div>
 
             {/* Key Findings */}
             <Card className="glass-card glass-card-hover shell-accent-strong border-0">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Eye className="w-5 h-5 interactive-icon" />
-                  <span>Key Findings</span>
+                  <span>Must See</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 relative z-10">
@@ -416,65 +381,57 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
             </Card>
 
             {/* New: Two vertical videos under Key Findings (Problem → Mitigation) */}
-<div className="space-y-4">
-  <Card className="glass-card glass-card-hover border-0">
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <Play className="w-5 h-5" />
-        <span>Problem Illustration – Incident Reconstruction</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="relative z-10">
-      {analysisData?.media?.problemVideoUrl ? (
-        <video className="w-full rounded-lg" controls playsInline preload="metadata" >
-  <source src={ASSETS.videos.problem} type="video/mp4" />
-</video>
-      ) : (
-        <div className="aspect-video bg-slate-900 rounded-lg relative overflow-hidden">
-          <ImageWithFallback
-            src="https://images.unsplash.com/photo-1581093588401-16b6dfa8d4ae?q=80&w=1080&auto=format&fit=crop"
-            alt="Incident reconstruction placeholder"
-            className="absolute inset-0 w-full h-full object-cover opacity-40"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-20 h-20 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
-              <Play className="w-10 h-10 text-white" />
-            </div>
-          </div>
-        </div>
-      )}
-    </CardContent>
-  </Card>
+{/* Animated & illustrative infographic cards */}
 
-  <Card className="glass-card glass-card-hover border-0">
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <Play className="w-5 h-5" />
-        <span>Mitigation Path – Corrective & Preventive Actions</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="relative z-10">
-      {analysisData?.media?.solutionVideoUrl ? (
-       <video className="w-full rounded-lg" controls playsInline preload="metadata" >
-  <source src={ASSETS.videos.solution} type="video/mp4" />
-</video>
-      ) : (
-        <div className="aspect-video bg-slate-900 rounded-lg relative overflow-hidden">
-          <ImageWithFallback
-            src="https://images.unsplash.com/photo-1581091014693-6ab42e2f6f86?q=80&w=1080&auto=format&fit=crop"
-            alt="Mitigation plan placeholder"
-            className="absolute inset-0 w-full h-full object-cover opacity-40"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-20 h-20 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
-              <Play className="w-10 h-10 text-white" />
-            </div>
-          </div>
-        </div>
-      )}
-    </CardContent>
-  </Card>
+  <div className="space-y-4">
+  <IframeInfographicCard
+    title="Mitigation Path – Corrective & Preventive Actions"
+    src="/infographics/mitigation/index.html?theme=default"
+  />
 </div>
+            {/* Key Metrics */}
+            <Card className="glass-card glass-card-hover shell-accent-medium border-0">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 interactive-icon" />
+                  <span>Analysis Summary</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="text-center space-y-2 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+                    <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
+                    <p className="text-2xl font-bold text-destructive">{analysisData.summary.severity}</p>
+                    <p className="text-sm text-muted-foreground">Severity Level</p>
+                  </div>
+                  <div className="text-center space-y-2 p-4 bg-accent/10 rounded-lg border border-accent/30">
+                    <Target className="w-8 h-8 text-accent-foreground mx-auto" />
+                    <p className="text-2xl font-bold text-accent-foreground">{analysisData.summary.riskScore}</p>
+                    <p className="text-sm text-muted-foreground">Recurrence Risk</p>
+                  </div>
+                  <div className="text-center space-y-2 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                    <CheckCircle className="w-8 h-8 text-primary mx-auto" />
+                    <p className="text-2xl font-bold text-primary">{analysisData.summary.confidence}%</p>
+                    <p className="text-sm text-muted-foreground">Confidence</p>
+                  </div>
+                </div>
+                
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Estimated Cost:</span>
+                    <span className="font-medium">{analysisData.summary.estimatedCost}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Time to Resolve:</span>
+                    <span className="font-medium">{analysisData.summary.timeToResolve}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Affected Personnel:</span>
+                    <span className="font-medium">{analysisData.summary.affectedPersonnel}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* New: Short conclusion under the videos */}
             <Card className="glass-card glass-card-hover border-0">
@@ -511,7 +468,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                   onClick={() => setShowExecutiveSummary(true)}
                 >
                   <FileText className="w-4 h-4 mr-2" />
-                  Executive Summary
+                  More Findings
                 </Button>
                 <Button variant="outline" className="w-full">
                   <Calendar className="w-4 h-4 mr-2" />
