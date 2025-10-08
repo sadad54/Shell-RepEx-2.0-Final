@@ -291,7 +291,9 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
               </CardContent>
             </Card>
             <div className="space-y-4">
-  <video src={ASSETS.videos.incidentVideo}  />
+  <video className="w-full rounded-lg" controls playsInline preload="metadata" >
+  <source src={ASSETS.videos.incidentVideo} type="video/mp4" />
+</video>
   </div>
 
             {/* Key Findings */}
@@ -385,7 +387,9 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
 {/* Animated & illustrative infographic cards */}
 
   <div className="space-y-4">
-  <video  src={ASSETS.videos.mitigationVideo}/>
+ <video className="w-full rounded-lg" controls playsInline preload="metadata" >
+  <source src={ASSETS.videos.mitigationVideo} type="video/mp4" />
+</video>
 </div>
             {/* Key Metrics */}
             <Card className="glass-card glass-card-hover shell-accent-medium border-0">
