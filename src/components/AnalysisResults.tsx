@@ -294,6 +294,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
               </CardContent>
             </Card>
             <div className="space-y-4">
+          <span className='font-bold text-lg'>Incident Animation</span>
   <video className="w-full rounded-lg" controls playsInline preload="metadata" >
   <source src={ASSETS.videos.incidentVideo} type="video/mp4" />
 </video>
@@ -388,12 +389,12 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
 
             {/* New: Two vertical videos under Key Findings (Problem → Mitigation) */}
 {/* Animated & illustrative infographic cards */}
-<Card>
+<span className='font-bold text-lg'>Response Animation</span>
   <div className="space-y-4">
- <CardTitle>Response Animation</CardTitle><video className="w-full rounded-lg" controls playsInline preload="metadata" >
+ <video className="w-full rounded-lg" controls playsInline preload="metadata" >
   <source src={ASSETS.videos.mitigationVideo} type="video/mp4" />
 </video>
-</div></Card>
+</div>
             {/* Key Metrics */}
             <Card className="glass-card glass-card-hover shell-accent-medium border-0">
               <CardHeader>
