@@ -288,6 +288,9 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {analysisData.executiveSummary}
                 </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {analysisData.executiveSummary}
+                </p>
               </CardContent>
             </Card>
             <div className="space-y-4">
