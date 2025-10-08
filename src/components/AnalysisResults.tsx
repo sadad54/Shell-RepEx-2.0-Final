@@ -438,7 +438,423 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                 </div>
               </CardContent>
             </Card>
+              {/* Interactive Control Panels */}
+              <div className="mt-6 space-y-4">
+                {/* Equipment View */}
+                <Collapsible open={equipmentViewOpen} onOpenChange={setEquipmentViewOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between glass-card glass-card-hover border-0 p-4"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center">
+                          <Wrench className="w-5 h-5 text-accent-foreground" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="font-medium">Equipment View</h3>
+                          <p className="text-sm text-muted-foreground">Critical equipment status and locations</p>
+                        </div>
+                      </div>
+                      {equipmentViewOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-4 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Card className="glass-card border-0">
+                        <CardContent className="p-4 relative z-10">
+                          <div className="flex items-start space-x-3">
+                            <ImageWithFallback 
+                              src="https://images.unsplash.com/photo-1588620598988-9f73e66e8df4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwZXF1aXBtZW50JTIwcHVtcCUyMGZhY2lsaXR5fGVufDF8fHx8MTc1OTg4OTEyMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                              alt="Pump Equipment"
+                              className="w-20 h-20 object-cover rounded-lg"
+                            />
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Pump Unit B-23</h4>
+                                <Badge variant="destructive">Critical</Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">Primary failure point - Bearing degradation detected</p>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">Temperature: 89°C</span>
+                                <span className="text-muted-foreground">Pressure: 2.3 bar</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
 
+                      <Card className="glass-card border-0">
+                        <CardContent className="p-4 relative z-10">
+                          <div className="flex items-start space-x-3">
+                            <ImageWithFallback 
+                              src="https://images.unsplash.com/photo-1722580089913-9a8dd0959470?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvaWwlMjBwaXBlbGluZSUyMHZhbHZlJTIwc3lzdGVtfGVufDF8fHx8MTc1OTg4OTEyNnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                              alt="Valve System"
+                              className="w-20 h-20 object-cover rounded-lg"
+                            />
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Safety Valve SV-45</h4>
+                                <Badge variant="outline" className="bg-accent/10 text-accent-foreground border-accent/30">Normal</Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">Operated correctly during incident sequence</p>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">Position: 85% Open</span>
+                                <span className="text-muted-foreground">Response: 2.3s</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="glass-card border-0">
+                        <CardContent className="p-4 relative z-10">
+                          <div className="flex items-start space-x-3">
+                            <ImageWithFallback 
+                              src="https://images.unsplash.com/photo-1738918937796-743064feefa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwY29udHJvbCUyMHJvb20lMjBtb25pdG9yaW5nfGVufDF8fHx8MTc1OTgzNjM4M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                              alt="Control Panel"
+                              className="w-20 h-20 object-cover rounded-lg"
+                            />
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Control Panel CP-12</h4>
+                                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30">Warning</Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">Delayed alarm acknowledgment</p>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">Response Time: 12s</span>
+                                <span className="text-muted-foreground">Operator: J. Smith</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="glass-card border-0">
+                        <CardContent className="p-4 relative z-10">
+                          <div className="space-y-3">
+                            <h4 className="font-medium flex items-center space-x-2">
+                              <Zap className="w-4 h-4 text-accent" />
+                              <span>Equipment Timeline</span>
+                            </h4>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between text-sm">
+                                <span>00:00 - Normal operation</span>
+                                <div className="w-3 h-3 bg-success rounded-full"></div>
+                              </div>
+                              <div className="flex items-center justify-between text-sm">
+                                <span>00:32 - Vibration detected</span>
+                                <div className="w-3 h-3 bg-warning rounded-full"></div>
+                              </div>
+                              <div className="flex items-center justify-between text-sm">
+                                <span>01:15 - Pump failure</span>
+                                <div className="w-3 h-3 bg-destructive rounded-full"></div>
+                              </div>
+                              <div className="flex items-center justify-between text-sm">
+                                <span>01:45 - Safety shutdown</span>
+                                <div className="w-3 h-3 bg-accent rounded-full"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Personnel Timeline */}
+                <Collapsible open={personnelTimelineOpen} onOpenChange={setPersonnelTimelineOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between glass-card glass-card-hover border-0 p-4"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-lg bg-info/10 border border-info/30 flex items-center justify-center">
+                          <HardHat className="w-5 h-5 text-info" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="font-medium">Personnel Timeline</h3>
+                          <p className="text-sm text-muted-foreground">Staff actions and response times</p>
+                        </div>
+                      </div>
+                      {personnelTimelineOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-4 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Card className="glass-card border-0">
+                        <CardContent className="p-4 relative z-10">
+                          <div className="flex items-start space-x-3">
+                            <ImageWithFallback 
+                              src="https://images.unsplash.com/photo-1759489172749-3ceb9e1eb985?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWZldHklMjBoZWxtZXQlMjB3b3JrZXIlMjBpbmR1c3RyaWFsfGVufDF8fHx8MTc1OTg4OTEyM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                              alt="Operator"
+                              className="w-16 h-16 object-cover rounded-full"
+                            />
+                            <div className="flex-1 space-y-2">
+                              <div>
+                                <h4 className="font-medium">John Smith</h4>
+                                <p className="text-sm text-muted-foreground">Control Room Operator</p>
+                              </div>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span>First alarm acknowledged:</span>
+                                  <span className="font-medium">00:44</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Emergency shutdown initiated:</span>
+                                  <span className="font-medium">01:52</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Response rating:</span>
+                                  <Badge variant="outline" className="bg-success/10 text-success border-success/30 text-xs">Good</Badge>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="glass-card border-0">
+                        <CardContent className="p-4 relative z-10">
+                          <div className="flex items-start space-x-3">
+                            <ImageWithFallback 
+                              src="https://images.unsplash.com/photo-1759489172749-3ceb9e1eb985?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYWZldHklMjBoZWxtZXQlMjB3b3JrZXIlMjBpbmR1c3RyaWFsfGVufDF8fHx8MTc1OTg4OTEyM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                              alt="Maintenance Tech"
+                              className="w-16 h-16 object-cover rounded-full"
+                            />
+                            <div className="flex-1 space-y-2">
+                              <div>
+                                <h4 className="font-medium">Maria Rodriguez</h4>
+                                <p className="text-sm text-muted-foreground">Maintenance Technician</p>
+                              </div>
+                              <div className="space-y-1 text-xs">
+                                <div className="flex justify-between">
+                                  <span>Arrived on scene:</span>
+                                  <span className="font-medium">02:15</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Initial assessment:</span>
+                                  <span className="font-medium">02:45</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Response rating:</span>
+                                  <Badge variant="outline" className="bg-success/10 text-success border-success/30 text-xs">Excellent</Badge>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="glass-card border-0 md:col-span-2">
+                        <CardContent className="p-4 relative z-10">
+                          <h4 className="font-medium mb-3 flex items-center space-x-2">
+                            <Users className="w-4 h-4 text-info" />
+                            <span>Response Team Timeline</span>
+                          </h4>
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-4 p-2 rounded border border-border">
+                              <span className="text-sm font-medium w-16">00:32</span>
+                              <div className="w-3 h-3 bg-warning rounded-full"></div>
+                              <span className="text-sm">Alarm triggered - J. Smith notified</span>
+                            </div>
+                            <div className="flex items-center space-x-4 p-2 rounded border border-border">
+                              <span className="text-sm font-medium w-16">00:44</span>
+                              <div className="w-3 h-3 bg-info rounded-full"></div>
+                              <span className="text-sm">J. Smith acknowledges alarm, begins assessment</span>
+                            </div>
+                            <div className="flex items-center space-x-4 p-2 rounded border border-border">
+                              <span className="text-sm font-medium w-16">01:15</span>
+                              <div className="w-3 h-3 bg-destructive rounded-full"></div>
+                              <span className="text-sm">Emergency response team called - M. Rodriguez dispatched</span>
+                            </div>
+                            <div className="flex items-center space-x-4 p-2 rounded border border-border">
+                              <span className="text-sm font-medium w-16">01:52</span>
+                              <div className="w-3 h-3 bg-accent rounded-full"></div>
+                              <span className="text-sm">Emergency shutdown initiated by J. Smith</span>
+                            </div>
+                            <div className="flex items-center space-x-4 p-2 rounded border border-border">
+                              <span className="text-sm font-medium w-16">02:15</span>
+                              <div className="w-3 h-3 bg-success rounded-full"></div>
+                              <span className="text-sm">M. Rodriguez arrives on scene, begins inspection</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Event Sequence */}
+                <Collapsible open={eventSequenceOpen} onOpenChange={setEventSequenceOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between glass-card glass-card-hover border-0 p-4"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">
+                          <Clock className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="font-medium">Event Sequence</h3>
+                          <p className="text-sm text-muted-foreground">Chronological incident progression</p>
+                        </div>
+                      </div>
+                      {eventSequenceOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-4 mt-4">
+                    <Card className="glass-card border-0">
+                      <CardContent className="p-4 relative z-10">
+                        <h4 className="font-medium mb-4 flex items-center space-x-2">
+                          <Clock className="w-4 h-4 text-primary" />
+                          <span>Detailed Event Timeline</span>
+                        </h4>
+                        <div className="space-y-4">
+                          <div className="relative pl-6 pb-4 border-l-2 border-success">
+                            <div className="absolute -left-2 top-0 w-4 h-4 bg-success rounded-full"></div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">00:00:00</span>
+                                <Badge variant="outline" className="bg-success/10 text-success border-success/30">Normal</Badge>
+                              </div>
+                              <p className="text-sm">Normal operation - All systems functioning within parameters</p>
+                              <div className="text-xs text-muted-foreground">
+                                Pump B-23: 1800 RPM, Temperature: 65°C, Pressure: 2.1 bar
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative pl-6 pb-4 border-l-2 border-warning">
+                            <div className="absolute -left-2 top-0 w-4 h-4 bg-warning rounded-full"></div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">00:00:32</span>
+                                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30">Warning</Badge>
+                              </div>
+                              <p className="text-sm">Vibration anomaly detected on Pump B-23 bearing</p>
+                              <div className="text-xs text-muted-foreground">
+                                Vibration level: 8.2 mm/s (Normal: &lt;5.0 mm/s)
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative pl-6 pb-4 border-l-2 border-warning">
+                            <div className="absolute -left-2 top-0 w-4 h-4 bg-warning rounded-full"></div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">00:00:44</span>
+                                <Badge variant="outline" className="bg-info/10 text-info border-info/30">Response</Badge>
+                              </div>
+                              <p className="text-sm">Operator J. Smith acknowledges alarm, begins system review</p>
+                              <div className="text-xs text-muted-foreground">
+                                Control room protocol followed, temperature rising to 72°C
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative pl-6 pb-4 border-l-2 border-destructive">
+                            <div className="absolute -left-2 top-0 w-4 h-4 bg-destructive rounded-full"></div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">00:01:15</span>
+                                <Badge variant="destructive">Critical</Badge>
+                              </div>
+                              <p className="text-sm">Pump B-23 bearing failure - Complete mechanical breakdown</p>
+                              <div className="text-xs text-muted-foreground">
+                                Temperature spike to 89°C, pressure drop to 1.2 bar, emergency response activated
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative pl-6 pb-4 border-l-2 border-accent">
+                            <div className="absolute -left-2 top-0 w-4 h-4 bg-accent rounded-full"></div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">00:01:52</span>
+                                <Badge variant="outline" className="bg-accent/10 text-accent-foreground border-accent/30">Action</Badge>
+                              </div>
+                              <p className="text-sm">Emergency shutdown initiated - Safety valve SV-45 activated</p>
+                              <div className="text-xs text-muted-foreground">
+                                System isolated, maintenance team dispatched, area secured
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative pl-6">
+                            <div className="absolute -left-2 top-0 w-4 h-4 bg-success rounded-full"></div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium">00:04:15</span>
+                                <Badge variant="outline" className="bg-success/10 text-success border-success/30">Secured</Badge>
+                              </div>
+                              <p className="text-sm">Area secured, incident contained - No injuries reported</p>
+                              <div className="text-xs text-muted-foreground">
+                                Investigation initiated, preliminary report filed
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+<Card className="glass-card glass-card-hover status-card-success shell-accent-subtle border-0">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <TrendingUp className="w-5 h-5 interactive-icon" />
+                <span>Prevention Strategies</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 relative z-10">
+              <div className="p-4 bg-accent/10 border border-accent/30 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-foreground mb-2">Predictive Maintenance Program</h4>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Implement IoT sensors and AI-driven monitoring to prevent similar equipment failures.
+                    </p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">ROI Potential:</span>
+                      <span className="font-medium text-success">$3.2M annually</span>
+                    </div>
+                  </div>
+                  <div className="w-20 h-16 flex-shrink-0">
+                    <ImageWithFallback 
+                      src={ASSETS.images.predictive}
+                      alt="IoT Monitoring Equipment"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-foreground mb-2">Enhanced Training Protocol</h4>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      VR-based emergency response training to reduce reaction times by 40%.
+                    </p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Implementation:</span>
+                      <span className="font-medium">Q1 2025</span>
+                    </div>
+                  </div>
+                  <div className="w-20 h-16 flex-shrink-0">
+                    <ImageWithFallback 
+                      src={ASSETS.images.training}
+                      alt="Training Personnel"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
             {/* New: Short conclusion under the videos */}
             <Card className="glass-card glass-card-hover border-0">
               <CardHeader>
@@ -523,11 +939,9 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
               {/* Enhanced Video Player */}
               <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg relative overflow-hidden group">
                 {/* Background facility image */}
-                <ImageWithFallback 
-                  src="https://images.unsplash.com/photo-1573153178631-49e3aa9e018b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvaWwlMjByZWZpbmVyeSUyMHNhZmV0eXxlbnwxfHx8fDE3NTk2ODQ2MDB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                  alt="Facility Overview"
-                  className="absolute inset-0 w-full h-full object-cover opacity-30"
-                />
+                <video>
+  <source src={ASSETS.videos.incidentVideo} type="video/mp4" />
+</video>
                 
                 {/* Video Placeholder Area */}
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -540,7 +954,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                       )}
                     </div>
                     <div className="text-white space-y-1">
-                      <h3 className="text-lg font-medium">Replace with your 3D animation video</h3>
+                      
                       <p className="text-slate-200 text-sm">Click the controls below to interact with the reconstruction</p>
                     </div>
                   </div>
