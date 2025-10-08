@@ -21,16 +21,8 @@ export function Header() {
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-3">
             {/* Shell Logo */}
-            <div className="w-8 h-8 flex items-center justify-center transition-transform hover:scale-105 duration-300">
-              <img 
-                src={shellLogo} 
-                alt="Shell" 
-                className="max-w-full max-h-full object-contain drop-shadow-lg" 
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                  console.error('Shell logo failed to load')
-                }}
-              />
+          <div className="w-8 h-8 rounded-full shell-gradient flex items-center justify-center">
+              <span className="text-white font-bold text-sm">S</span>
             </div>
             <span className="font-semibold text-xl text-foreground tracking-tight">RepEx</span>
             <div className="w-px h-6 bg-border opacity-50"></div>
