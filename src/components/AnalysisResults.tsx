@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { 
   CheckCircle, 
   AlertTriangle, 
@@ -55,7 +55,57 @@ import {
 import { IframeInfographicCard } from './IframeInfographicCard'
 
 
+function AutoplayVideoCard({ videoSrc, title }: { videoSrc: string; title: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
 
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          videoElement.play().catch(() => {
+            // Autoplay blocked - silent fail
+          });
+        } else {
+          videoElement.pause();
+        }
+      },
+      {
+        threshold: 0.5, // Trigger when 50% visible
+      }
+    );
+
+    observer.observe(videoElement);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <Card className="glass-card glass-card-hover shell-accent-strong border-0">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <Play className="w-5 h-5 interactive-icon" />
+          <span>{title}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4 relative z-10">
+        <video
+          ref={videoRef}
+          className="w-full rounded-lg"
+          playsInline
+          preload="metadata"
+          muted
+          loop
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      </CardContent>
+    </Card>
+  );
+}
 const ASSETS = {
   images: {
     coupling: couplingImg,
@@ -71,6 +121,11 @@ const ASSETS = {
  }
   
 }
+
+
+
+
+
 
 
 interface AnalysisResultsProps {
@@ -152,6 +207,25 @@ const analysisData = {
     solutionVideoUrl: 'ASSETS.videos.solution',
     reconstructionVideo2: 'ASSETS.videos.3d_reconstructionv2'  // e.g., '/media/mitigation_plan.mp4'
   },
+   whyAnalysis: [
+    "Why did the coupling fail? - Degraded flexible hose exceeded its 60-month certification period by 4 months",
+    "Why was it not replaced? - CMMS work order (WO-23-1847) was postponed due to parts availability",
+    "Why was it not rescheduled? - Lack of escalation protocol for postponed critical maintenance",
+    "Why no escalation protocol? - CMMS work orders could be postponed indefinitely without risk assessment",
+    "Why no risk assessment? - Limited integration between maintenance scheduling and asset lifecycle management"
+  ],
+  howImplementation: [
+    "How to prevent recurrence? - Implement proactive coupling replacement program aligned with certification periods",
+    "How to improve inspection? - Add mandatory certification date verification (Step 4.7) to pre-transfer checklist SOP-DIS-003",
+    "How to manage maintenance? - Deploy automated CMMS escalation to Terminal Manager if work orders overdue >30 days",
+    "How to monitor fleet health? - Establish asset health dashboard with Power BI integration for aging critical assets"
+  ],
+  whatOutcomes: [
+    "What was the direct cost? - SGD 185,000 (emergency response, cleanup, lost product, equipment, downtime, regulatory)",
+    "What was the total impact? - SGD 258,000 including indirect costs (reputation, insurance, regulatory scrutiny)",
+    "What was prevented? - Marine pollution avoided through 12-minute containment; zero injuries achieved",
+    "What must change? - 27 couplings currently exceed service life; 9 assets rated CRITICAL requiring immediate action"
+  ],
   conclusion:
     'The incident was precipitated by service-life overrun of a critical coupling and checklist gaps. Rapid ESD and containment prevented marine pollution and injuries. Immediate fleet-wide coupling governance, certification checks in SOPs, and CMMS alerting are essential to reduce recurrence risk (78%) and cost exposure (SGD 258k total).',
   executiveSummary: 'The analysis identified key root causes, response effectiveness, and actionable recommendations to mitigate future risks. Immediate actions include emergency coupling replacements, SOP updates, and CMMS alerting. Long-term strategies involve IoT monitoring and predictive maintenance to enhance asset reliability and safety culture.'
@@ -163,19 +237,69 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
   const [personnelTimelineOpen, setPersonnelTimelineOpen] = useState(false)
   const [eventSequenceOpen, setEventSequenceOpen] = useState(false)
    const [equipmentViewOpen, setEquipmentViewOpen] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(32)
-  const [volume, setVolume] = useState(75)
-  const [duration] = useState(255) // 4:15 in seconds
-    const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
 
+
+  
+  // State hooks you likely already have
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [volume, setVolume] = useState(75);
+
+  // NEW: Create a ref to access the video DOM element directly
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // NEW: Effect to handle playing and pausing the video
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
+
+  // NEW: Effect to update the video's volume when the state changes
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = volume / 100; // HTML volume is 0 to 1
+    }
+  }, [volume]);
+  
+  // NEW: Functions to handle video events
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(videoRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      setDuration(videoRef.current.duration);
+    }
+  };
+
+  // Your existing toggle function
   const togglePlayback = () => {
-    setIsPlaying(!isPlaying)
-  }
+    setIsPlaying(!isPlaying);
+  };
+
+  // NEW: Function to handle seeking with the slider
+  const handleSeek = (newTime: number[]) => {
+    if (videoRef.current) {
+      const time = newTime[0] ?? 0;
+      videoRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+  
+  // Your existing time formatting function
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -281,6 +405,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
               </CardContent>
             </Card>
  <Card className="glass-card glass-card-hover border-0">
+  <div className="p-4 bg-accent/10 border border-accent/30 rounded-lg">
               <CardHeader>
                 <CardTitle>Executive Summary</CardTitle>
               </CardHeader>
@@ -291,13 +416,14 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {analysisData.executiveSummary}
                 </p>
-              </CardContent>
+              </CardContent></div>
             </Card>
             <div className="space-y-4">
-          <span className='font-bold text-lg'>Incident Animation</span>
-  <video className="w-full rounded-lg" controls playsInline preload="metadata" >
-  <source src={ASSETS.videos.incidentVideo} type="video/mp4" />
-</video>
+       <AutoplayVideoCard 
+  videoSrc={ASSETS.videos.incidentVideo} 
+  title="Incident Animation" 
+/>
+
   </div>
 
             {/* Key Findings */}
@@ -389,12 +515,21 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
 
             {/* New: Two vertical videos under Key Findings (Problem → Mitigation) */}
 {/* Animated & illustrative infographic cards */}
-<span className='font-bold text-lg'>Response Animation</span>
-  <div className="space-y-4">
- <video className="w-full rounded-lg" controls playsInline preload="metadata" >
-  <source src={ASSETS.videos.mitigationVideo} type="video/mp4" />
-</video>
-</div>
+
+
+
+
+
+
+
+<AutoplayVideoCard 
+  videoSrc={ASSETS.videos.mitigationVideo} 
+  title="Response Animation" 
+/>
+
+
+
+
             {/* Key Metrics */}
             <Card className="glass-card glass-card-hover shell-accent-medium border-0">
               <CardHeader>
@@ -856,7 +991,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
             </CardContent>
           </Card>
             {/* New: Short conclusion under the videos */}
-            <Card className="glass-card glass-card-hover border-0">
+            <Card className="glass-card glass-card-hover border-0"><div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
               <CardHeader>
                 <CardTitle>Conclusion</CardTitle>
               </CardHeader>
@@ -864,7 +999,7 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {analysisData.conclusion}
                 </p>
-              </CardContent>
+              </CardContent></div>
             </Card>
           </div>
 
@@ -900,30 +1035,96 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
             </Card>
 
             {/* Pattern Matches */}
-            <Card className="glass-card glass-card-hover status-card-warning shell-accent-medium border-0">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 interactive-icon animate-glow" />
-                  <span>Pattern Detection</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="relative z-10">
-                {analysisData.patternMatches.map((pattern, index) => (
-                  <div key={index} className="space-y-3">
-                    <div className="p-3 bg-accent/10 border border-accent/30 rounded-lg">
-                      <h4 className="font-medium text-foreground">{pattern.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{pattern.description}</p>
-                      <Badge variant="outline" className="mt-2 text-xs bg-destructive/10 text-destructive border-destructive/20">
-                        {pattern.riskIncreaseNote}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+<Card className="glass-card glass-card-hover status-card-warning shell-accent-medium border-0">
+  <CardHeader>
+    <CardTitle className="flex items-center space-x-2">
+      <TrendingUp className="w-5 h-5 interactive-icon animate-glow" />
+      <span>Pattern Detection</span>
+    </CardTitle>
+  </CardHeader>
+  <CardContent className="relative z-10 space-y-4">
+    {analysisData.patternMatches.map((pattern, index) => (
+      <div key={index}>
+        <div className="p-3 bg-accent/10 border border-accent/30 rounded-lg">
+          <h4 className="font-medium text-foreground">{pattern.title}</h4>
+          <p className="text-sm text-muted-foreground mt-1">{pattern.description}</p>
+          <Badge variant="outline" className="mt-2 text-xs bg-destructive/10 text-destructive border-destructive/20">
+            {pattern.riskIncreaseNote}
+          </Badge>
+        </div>
+      </div>
+    ))}
+    
+    <Separator className="my-4" />
+    
+    {/* Why Analysis */}
+    <div className="space-y-3">
+      <h4 className="font-semibold text-sm flex items-center space-x-2">
+        <AlertTriangle className="w-4 h-4 text-destructive" />
+        <span>Why Analysis (5 Whys)</span>
+      </h4>
+      <div className="space-y-2">
+        {[
+          "Why did the coupling fail? - Degraded flexible seal exceeded its 60-month service life by 4 months",
+          "Why was the service life exceeded? - Asset tracking system did not trigger replacement alert",
+          "Why was it not replaced? - CMMS work order (WO: 23-1847) was postponed due to parts availability",
+          "Why was it not rescheduled? - Lack of escalation protocol for postponed critical maintenance tasks",
+          "Why no escalation protocol? - CMMS lacks system to flag postponed high-priority maintenance",
+          "Why no risk assessment? - Limited integration between maintenance scheduling and safety systems"
+        ].map((why, index) => (
+          <div key={index} className="p-2 bg-muted rounded text-xs">
+            <p className="text-foreground leading-relaxed">{why}</p>
           </div>
+        ))}
+      </div>
+    </div>
+
+    {/* How Implementation */}
+    <div className="space-y-3">
+      <h4 className="font-semibold text-sm flex items-center space-x-2">
+        <Wrench className="w-4 h-4 text-accent-foreground" />
+        <span>How Implementation</span>
+      </h4>
+      <div className="space-y-2">
+        {[
+          "How to prevent recurrence? - Implement fleet-wide coupling inspection program with IoT sensors",
+          "How to enforce compliance? - Automate SOP-DIS-003 checklist verification (Step 4.7) via digital approval workflow",
+          "How to improve inspection? - Add regulatory authority pre-verification (Step 4.7) to loading checklist with sign-off gates",
+          "How to manage maintenance? - Deploy escalation rules in CMMS to Technical Superintendents for overdue critical tasks",
+          "How to monitor fleet health? - Establish asset health dashboard with Phase B! integration tracking wear indicators"
+        ].map((how, index) => (
+          <div key={index} className="p-2 bg-accent/10 border border-accent/30 rounded text-xs">
+            <p className="text-foreground leading-relaxed">{how}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* What Outcomes */}
+    <div className="space-y-3">
+      <h4 className="font-semibold text-sm flex items-center space-x-2">
+        <Target className="w-4 h-4 text-success" />
+        <span>What Outcomes</span>
+      </h4>
+      <div className="space-y-2">
+        {[
+          "What was the direct cost? - SGD 185,000: Cleanup (SGD 47k), replacement parts (SGD 89k), and downtime costs (SGD 49k)",
+          "What was the total impact? - SGD 258,000: Including regulatory response, reputation, and insurance premium adjustments",
+          "What were the environmental effects? - 320L Brent Crude released, fully contained with no marine pollution reported",
+          "What was prevented? - Marine pollution, refined penalties, and operational suspension due to rapid ESD and containment",
+          "What must change? - 27 underdue couplings remain across the PB-J infrastructure - Critical immediate action needed"
+        ].map((what, index) => (
+          <div key={index} className="p-2 bg-success/10 border border-success/30 rounded text-xs">
+            <p className="text-foreground leading-relaxed">{what}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </CardContent>
+</Card>  </div>
         </div>
       )}
+  
       {/* 3D Animation View */}
           {/* 3D Animation View */}
       {activeView === 'animation' && (
@@ -933,93 +1134,94 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
               <CardTitle className="flex items-center space-x-2">
                 <Play className="w-5 h-5" />
                 <span>3D Incident Reconstruction</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              {/* Enhanced Video Player */}
-              <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg relative overflow-hidden group">
-                {/* Background facility image */}
-                <video>
-  <source src={ASSETS.videos.incidentVideo} type="video/mp4" />
-</video>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="relative z-10">
+          <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg relative overflow-hidden group">
+                    {/* NEW: Attach the ref and event handlers to the video element */}
+            <video
+              ref={videoRef}
+              onTimeUpdate={handleTimeUpdate}
+              onLoadedMetadata={handleLoadedMetadata}
+              className="w-full h-full"
+            >
+              <source src={ASSETS.videos.incidentVideo} type="video/mp4" />
+            </video>
                 
-                {/* Video Placeholder Area */}
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="w-20 h-20 mx-auto bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-primary/30 cursor-pointer hover:bg-primary/30 transition-all" onClick={togglePlayback}>
-                      {isPlaying ? (
-                        <Pause className="w-10 h-10 text-white" />
-                      ) : (
-                        <Play className="w-10 h-10 text-white ml-1" />
-                      )}
-                    </div>
-                    <div className="text-white space-y-1">
-                      
-                      <p className="text-slate-200 text-sm">Click the controls below to interact with the reconstruction</p>
-                    </div>
+                {/* Video Placeholder Area (conditionally rendered or styled to hide when playing) */}
+            {!isPlaying && (
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 mx-auto bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-primary/30 cursor-pointer hover:bg-primary/30 transition-all" onClick={togglePlayback}>
+                    <Play className="w-10 h-10 text-white ml-1" />
+                  </div>
+                  <div className="text-white space-y-1">
+                    <p className="text-slate-200 text-sm">Click the controls below to interact with the reconstruction</p>
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* Equipment markers overlay */}
-                <div className="absolute top-4 left-4">
-                  <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2 text-white text-xs">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                      <span>Pump Unit B-23</span>
-                    </div>
-                  </div>
+                 {/* Equipment markers overlay */}
+            <div className="absolute top-4 left-4">
+              <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2 text-white text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  <span>Pump Unit B-23</span>
                 </div>
+              </div>
+            </div>
 
-                {/* Video Controls Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {/* Progress Bar */}
-                  <div className="mb-3">
-                    <Slider
-                      value={[currentTime]}
-                      onValueChange={(vals:number[]) => setCurrentTime(vals[0])??0}
-                      max={duration}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-white/80 mt-1">
-                      <span>{formatTime(currentTime)}</span>
-                      <span>{formatTime(duration)}</span>
-                    </div>
-                  </div>
+                 {/* Video Controls Overlay */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Progress Bar */}
+              <div className="mb-3">
+                <Slider
+                  value={[currentTime]}
+                  onValueChange={handleSeek} // NEW: Use the seek handler
+                  max={duration}
+                  step={1}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-white/80 mt-1">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
 
                   {/* Control Buttons */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                        <SkipBack className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2" onClick={togglePlayback}>
-                        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                      </Button>
-                      <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                        <SkipForward className="w-4 h-4" />
-                      </Button>
+                   <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
+                    <SkipBack className="w-4 h-4" />
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2" onClick={togglePlayback}>
+                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
+                    <SkipForward className="w-4 h-4" />
+                  </Button>
                       
                       <div className="flex items-center space-x-2 ml-4">
-                        <Volume2 className="w-4 h-4 text-white" />
-                        <Slider
-                          value={[volume]}
-                          onValueChange={(vals:number[]) => setVolume(vals[0]??0)}
-                          max={100}
-                          step={1}
-                          className="w-20"
-                        />
-                      </div>
-                    </div>
+                    <Volume2 className="w-4 h-4 text-white" />
+                    <Slider
+                      value={[volume]}
+                      onValueChange={(vals: number[]) => setVolume(vals[0] ?? 0)}
+                      max={100}
+                      step={1}
+                      className="w-20"
+                    />
+                  </div>
+                </div>
 
                     <div className="flex items-center space-x-2">
-                      <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                        <Settings className="w-4 h-4" />
-                      </Button>
-                      <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                        <Maximize className="w-4 h-4" />
-                      </Button>
-                    </div>
+                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
+                    <Maximize className="w-4 h-4" />
+                  </Button>
+                </div>
                   </div>
                 </div>
               </div>
