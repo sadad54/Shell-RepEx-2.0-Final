@@ -18,13 +18,12 @@ import {
 } from 'lucide-react';
 
 // Import the response timeline from animation data
-import { mitigationAnimationScript } from './animation-data';
+import {mitigationAnimationScript} from './components/animation-data';
 
 // Type definitions
 type LabelProps = { children: React.ReactNode; position: [number, number, number]; fontSize?: number };
 type VesselProps = { position: [number, number, number] };
 type PersonnelProps = { position: [number, number, number]; color: string; label: string; active: boolean };
-type EquipmentProps = { position: [number, number, number]; type: string; active: boolean };
 type ContainmentBoomProps = { deployed: boolean; progress: number };
 type SpillProps = { visible: boolean; contained: boolean; recoveryProgress: number };
 type VacuumTruckProps = { position: [number, number, number]; active: boolean };
@@ -62,18 +61,22 @@ const Vessel = ({ position }: VesselProps) => {
 
   return (
     <group ref={meshRef} position={position}>
-      <Box args={[5, 2, 2.5]} position={[0, 1, 0]} castShadow>
+      <mesh position={[0, 1, 0]} castShadow>
+        <boxGeometry args={[5, 2, 2.5]} />
         <meshStandardMaterial color="#2d3436" metalness={0.8} roughness={0.2} />
-      </Box>
-      <Box args={[5, 0.3, 2.5]} position={[0, 2.15, 0]} castShadow>
+      </mesh>
+      <mesh position={[0, 2.15, 0]} castShadow>
+        <boxGeometry args={[5, 0.3, 2.5]} />
         <meshStandardMaterial color="#636e72" />
-      </Box>
-      <Box args={[1.5, 1.2, 2]} position={[-1.5, 3.1, 0]} castShadow>
+      </mesh>
+      <mesh position={[-1.5, 3.1, 0]} castShadow>
+        <boxGeometry args={[1.5, 1.2, 2]} />
         <meshStandardMaterial color="#34495e" />
-      </Box>
-      <Cylinder args={[0.3, 0.3, 1.5, 16]} position={[-1.5, 4.8, 0.7]} castShadow>
+      </mesh>
+      <mesh position={[-1.5, 4.8, 0.7]} castShadow>
+        <cylinderGeometry args={[0.3, 0.3, 1.5, 16]} />
         <meshStandardMaterial color="#e74c3c" />
-      </Cylinder>
+      </mesh>
       <Label position={[0, 4, 0]} fontSize={0.5}>MT AURORA</Label>
     </group>
   );
@@ -81,29 +84,34 @@ const Vessel = ({ position }: VesselProps) => {
 
 const Jetty = () => (
   <group position={[8, 0, 0]}>
-    <Box args={[7, 0.5, 7]} position={[0, 0.25, 0]} castShadow>
+    <mesh position={[0, 0.25, 0]} castShadow>
+      <boxGeometry args={[7, 0.5, 7]} />
       <meshStandardMaterial color="#4a4a4a" metalness={0.3} roughness={0.8} />
-    </Box>
+    </mesh>
     {[-2.5, 0, 2.5].map((z, i) => (
       <React.Fragment key={i}>
-        <Cylinder args={[0.35, 0.35, 3, 16]} position={[-2.5, -1.5, z]}>
+        <mesh position={[-2.5, -1.5, z]}>
+          <cylinderGeometry args={[0.35, 0.35, 3, 16]} />
           <meshStandardMaterial color="#2c3e50" />
-        </Cylinder>
-        <Cylinder args={[0.35, 0.35, 3, 16]} position={[2.5, -1.5, z]}>
+        </mesh>
+        <mesh position={[2.5, -1.5, z]}>
+          <cylinderGeometry args={[0.35, 0.35, 3, 16]} />
           <meshStandardMaterial color="#2c3e50" />
-        </Cylinder>
+        </mesh>
       </React.Fragment>
     ))}
-    <Box args={[3.5, 2.5, 3.5]} position={[0, 1.75, 0]} castShadow>
+    <mesh position={[0, 1.75, 0]} castShadow>
+      <boxGeometry args={[3.5, 2.5, 3.5]} />
       <meshStandardMaterial color="#34495e" />
-    </Box>
+    </mesh>
     <Label position={[0, 3.8, 0]} fontSize={0.5}>JETTY 3</Label>
   </group>
 );
 
 const FailedCoupling = () => (
   <group position={[2, 1.5, 0]}>
-    <Cylinder args={[0.35, 0.35, 1.2, 32]} rotation={[Math.PI / 2, 0, 0.3]}>
+    <mesh rotation={[Math.PI / 2, 0, 0.3]}>
+      <cylinderGeometry args={[0.35, 0.35, 1.2, 32]} />
       <meshStandardMaterial 
         color="#e74c3c" 
         metalness={0.8} 
@@ -111,10 +119,11 @@ const FailedCoupling = () => (
         emissive="#c0392b"
         emissiveIntensity={0.3}
       />
-    </Cylinder>
-    <Box args={[0.05, 0.05, 1.3]} position={[0.15, 0, 0]} rotation={[Math.PI / 2, 0, 0.3]}>
+    </mesh>
+    <mesh position={[0.15, 0, 0]} rotation={[Math.PI / 2, 0, 0.3]}>
+      <boxGeometry args={[0.05, 0.05, 1.3]} />
       <meshStandardMaterial color="#000000" />
-    </Box>
+    </mesh>
   </group>
 );
 
@@ -131,12 +140,14 @@ const ResponsePersonnel = ({ position, color, label, active }: PersonnelProps) =
 
   return (
     <group ref={meshRef} position={position}>
-      <Cylinder args={[0.25, 0.15, 1.2, 8]} position={[0, 0.6, 0]}>
+      <mesh position={[0, 0.6, 0]}>
+        <cylinderGeometry args={[0.25, 0.15, 1.2, 8]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.2} />
-      </Cylinder>
-      <Sphere args={[0.22, 16, 16]} position={[0, 1.35, 0]}>
+      </mesh>
+      <mesh position={[0, 1.35, 0]}>
+        <sphereGeometry args={[0.22, 16, 16]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.2} />
-      </Sphere>
+      </mesh>
       <Label position={[0, 2, 0]} fontSize={0.28}>{label}</Label>
     </group>
   );
@@ -144,14 +155,15 @@ const ResponsePersonnel = ({ position, color, label, active }: PersonnelProps) =
 
 const ESDButton = ({ position, activated }: { position: [number, number, number]; activated: boolean }) => (
   <group position={position}>
-    <Cylinder args={[0.3, 0.3, 0.2, 32]} rotation={[Math.PI / 2, 0, 0]}>
+    <mesh rotation={[Math.PI / 2, 0, 0]}>
+      <cylinderGeometry args={[0.3, 0.3, 0.2, 32]} />
       <meshStandardMaterial 
         color={activated ? "#e74c3c" : "#c0392b"} 
         emissive="#e74c3c"
         emissiveIntensity={activated ? 1.5 : 0.3}
         metalness={0.8}
       />
-    </Cylinder>
+    </mesh>
     {activated && (
       <pointLight position={[0, 0, 0.5]} color="#e74c3c" intensity={3} distance={8} />
     )}
@@ -169,14 +181,14 @@ const ContainmentBoom = ({ deployed, progress }: ContainmentBoomProps) => {
     const angle = (i / 24) * Math.PI * 2;
     const radius = 5.5;
     boomSegments.push(
-      <Cylinder
+      <mesh
         key={i}
-        args={[0.18, 0.18, 0.6, 8]}
         position={[2 + Math.cos(angle) * radius, 0.3, Math.sin(angle) * radius]}
         rotation={[Math.PI / 2, 0, 0]}
       >
+        <cylinderGeometry args={[0.18, 0.18, 0.6, 8]} />
         <meshStandardMaterial color="#f39c12" roughness={0.4} emissive="#f39c12" emissiveIntensity={0.3} />
-      </Cylinder>
+      </mesh>
     );
   }
 
@@ -244,21 +256,22 @@ const VacuumTruck = ({ position, active }: VacuumTruckProps) => {
 
   return (
     <group position={position}>
-      {/* Truck body */}
-      <Box args={[2, 1, 1.5]} position={[0, 0.5, 0]}>
+      <mesh position={[0, 0.5, 0]}>
+        <boxGeometry args={[2, 1, 1.5]} />
         <meshStandardMaterial color="#f39c12" metalness={0.6} />
-      </Box>
-      {/* Tank */}
-      <Cylinder args={[0.5, 0.5, 2, 16]} rotation={[0, 0, Math.PI / 2]} position={[-0.5, 0.5, 0]}>
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[-0.5, 0.5, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 2, 16]} />
         <meshStandardMaterial color="#95a5a6" metalness={0.8} />
-      </Cylinder>
-      {/* Wheels */}
-      <Cylinder args={[0.25, 0.25, 0.2, 16]} rotation={[0, 0, Math.PI / 2]} position={[-0.8, 0, 0.6]}>
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[-0.8, 0, 0.6]}>
+        <cylinderGeometry args={[0.25, 0.25, 0.2, 16]} />
         <meshStandardMaterial color="#2c3e50" />
-      </Cylinder>
-      <Cylinder args={[0.25, 0.25, 0.2, 16]} rotation={[0, 0, Math.PI / 2]} position={[-0.8, 0, -0.6]}>
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[-0.8, 0, -0.6]}>
+        <cylinderGeometry args={[0.25, 0.25, 0.2, 16]} />
         <meshStandardMaterial color="#2c3e50" />
-      </Cylinder>
+      </mesh>
       <Label position={[0, 1.5, 0]} fontSize={0.25}>VACUUM</Label>
     </group>
   );
@@ -278,18 +291,17 @@ const WarningLight = ({ active, position }: { active: boolean; position: [number
   return (
     <group position={position}>
       <pointLight ref={lightRef} color="#e74c3c" intensity={3} distance={15} />
-      <Sphere args={[0.25, 16, 16]}>
+      <mesh>
+        <sphereGeometry args={[0.25, 16, 16]} />
         <meshStandardMaterial 
           color="#e74c3c" 
           emissive="#e74c3c" 
           emissiveIntensity={2}
         />
-      </Sphere>
+      </mesh>
     </group>
   );
 };
-
-// Main Solution Animation Component
 export const SolutionAnimation = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -420,10 +432,10 @@ export const SolutionAnimation = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-green-600 rounded-lg">
-              <Shield className="w-6 h-6 text-white" />
+              <Shield className="w-6 h-6 text-black" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Emergency Response - 3D Reconstruction</h2>
+              <h2 className="text-2xl font-bold text-black">Emergency Response - 3D Reconstruction</h2>
               <p className="text-gray-300 text-sm">How the incident was successfully contained and resolved</p>
             </div>
           </div>
@@ -431,7 +443,7 @@ export const SolutionAnimation = () => {
             <button
               onClick={runSolutionAnimation}
               disabled={isPlaying}
-              className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-all font-semibold disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black rounded-lg transition-all font-semibold disabled:cursor-not-allowed"
             >
               {isPlaying ? (
                 <>
@@ -447,7 +459,7 @@ export const SolutionAnimation = () => {
             </button>
             <button
               onClick={handleReset}
-              className="p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all"
+              className="p-2 bg-gray-700 hover:bg-gray-600 text-black rounded-lg transition-all"
             >
               <RotateCcw className="w-5 h-5" />
             </button>
@@ -462,13 +474,13 @@ export const SolutionAnimation = () => {
             <div className={`w-3 h-3 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-blue-500'}`} />
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-white font-semibold">{currentStep?.action}</span>
+                <span className="text-black font-semibold">{currentStep?.action}</span>
                 <span className="text-gray-400 text-sm">{currentStep?.timestamp}</span>
               </div>
               <p className="text-gray-300 text-sm">{currentStep?.description}</p>
             </div>
           </div>
-          <div className={`ml-4 px-3 py-1 rounded-full text-xs font-semibold text-white ${getStatusColor(currentStep?.status || 'detected')}`}>
+          <div className={`ml-4 px-3 py-1 rounded-full text-xs font-semibold text-black ${getStatusColor(currentStep?.status || 'detected')}`}>
             {currentStep?.status?.toUpperCase()}
           </div>
         </div>
@@ -595,7 +607,7 @@ export const SolutionAnimation = () => {
             <div className="flex items-center space-x-3">
               <Users className="w-5 h-5 text-green-400" />
               <div className="text-left">
-                <h3 className="text-white font-semibold">Response Team Actions</h3>
+                <h3 className="text-black font-semibold">Response Team Actions</h3>
                 <p className="text-gray-400 text-sm">Detailed breakdown of personnel actions during response</p>
               </div>
             </div>
@@ -609,4 +621,125 @@ export const SolutionAnimation = () => {
                   <div 
                     key={index}
                     className={`flex items-start space-x-4 p-4 rounded-lg transition-all ${
-                      index === currentSt
+                      index === currentStepIndex 
+                        ? 'bg-green-900/30 border-2 border-green-500' 
+                        : 'bg-gray-800/50 border border-gray-700'
+                    }`}
+                  >
+                    <div className="flex-shrink-0">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                        index === currentStepIndex 
+                          ? 'bg-green-500 text-black' 
+                          : index < currentStepIndex 
+                            ? 'bg-green-700 text-white' 
+                            : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        {index + 1}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-black font-semibold">{event.action}</h4>
+                        <span className="text-gray-400 text-xs">{event.timestamp}</span>
+                      </div>
+                      <p className="text-gray-300 text-sm mb-2">{event.description}</p>
+                      <div className="flex items-center space-x-2">
+                        <Users className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-400 text-xs">
+                          {event.personnel.join(', ')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Success Metrics Summary */}
+        <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 p-6 rounded-lg border border-green-700/50">
+          <h3 className="text-black font-semibold mb-4 flex items-center space-x-2">
+            <Shield className="w-5 h-5 text-green-400" />
+            <span>Emergency Response Success Metrics</span>
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="text-center">
+              <Clock className="w-6 h-6 text-green-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-black">{emergencyResponse.successMetrics.containmentTime}</div>
+              <div className="text-xs text-gray-400">Containment Time</div>
+            </div>
+            <div className="text-center">
+              <Droplets className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-black">{emergencyResponse.successMetrics.recoveryRate}</div>
+              <div className="text-xs text-gray-400">Recovery Rate</div>
+            </div>
+            <div className="text-center">
+              <Users className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-black">{emergencyResponse.successMetrics.injuries}</div>
+              <div className="text-xs text-gray-400">Injuries</div>
+            </div>
+            <div className="text-center">
+              <Shield className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-black">{emergencyResponse.successMetrics.marinePollution}</div>
+              <div className="text-xs text-gray-400">Marine Pollution</div>
+            </div>
+            <div className="text-center">
+              <Clock className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-black">{emergencyResponse.successMetrics.responseTime}</div>
+              <div className="text-xs text-gray-400">ESD Response</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Learnings */}
+        <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+          <h3 className="text-black font-semibold mb-4">Key Learnings from Emergency Response</h3>
+          <div className="space-y-3">
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <p className="text-gray-300 text-sm">
+                  <span className="text-black font-medium">Rapid ESD Activation:</span> Emergency shutdown within 2 minutes significantly limited spill volume
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <p className="text-gray-300 text-sm">
+                  <span className="text-black font-medium">Effective Containment:</span> Deployment of containment booms within 10 minutes prevented marine pollution
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <p className="text-gray-300 text-sm">
+                  <span className="text-black font-medium">Coordinated Team Response:</span> Multi-team coordination between vessel crew, terminal operators, and ERT was crucial
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <p className="text-gray-300 text-sm">
+                  <span className="text-black font-medium">Regulatory Compliance:</span> Timely notifications to MPA and NEA ensured compliance and support
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+              <div>
+                <p className="text-gray-300 text-sm">
+                  <span className="text-black font-medium">High Recovery Rate:</span> 87% oil recovery demonstrates effectiveness of cleanup procedures
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default SolutionAnimation;

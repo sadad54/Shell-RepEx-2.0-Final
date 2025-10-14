@@ -44,7 +44,7 @@ import emergencyImg from '../assets/images/emergency_timeline.png';
 import environmentImg from '../assets/images/environment_containment.png';
 import predictiveImg from '../assets/images/predictive.png';
 import trainingImg from '../assets/images/training.png';
-
+import SolutionAnimation from '../ShellAnimations2';
 import { IncidentAnimation, MitigationAnimation } from '../ShellAnimations';
 import {
   Collapsible,
@@ -375,8 +375,6 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
 {/* Animated & illustrative infographic cards */}
 
 
-  
-
 
 
 
@@ -426,6 +424,12 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
                 </div>
               </CardContent>
             </Card>
+
+
+                         <div className="lg:col-span-1">
+        <SolutionAnimation />
+      </div>
+
               {/* Interactive Control Panels */}
               
 <Card className="glass-card glass-card-hover status-card-success shell-accent-subtle border-0">

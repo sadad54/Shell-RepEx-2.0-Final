@@ -393,7 +393,7 @@ export const IncidentAnimation = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-600 rounded-lg">
-              <Droplets className="w-6 h-6 text-white" />
+              <Droplets className="w-6 h-6 text-black" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-black">Incident Reconstruction</h2>
@@ -541,7 +541,7 @@ export const IncidentAnimation = () => {
           <div className="space-y-2 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Date:</span>
-              <span className="text-white font-medium">{metadata.incidentDate}</span>
+              <span className="text-black font-medium">{metadata.incidentDate}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Severity:</span>
@@ -549,7 +549,7 @@ export const IncidentAnimation = () => {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Spill Volume:</span>
-              <span className="text-white font-medium">{metadata.totalSpillVolume}</span>
+              <span className="text-black font-medium">{metadata.totalSpillVolume}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">Recovered:</span>
@@ -588,9 +588,9 @@ export const IncidentAnimation = () => {
                   <div className="flex items-start justify-between mb-3">
                     <h4 className="text-black font-semibold text-sm">{item.name}</h4>
                     <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                      item.status === 'failed' ? 'bg-red-500 text-white' :
-                      item.status === 'activated' ? 'bg-blue-500 text-white' :
-                      'bg-green-500 text-white'
+                      item.status === 'failed' ? 'bg-red-500 text-black' :
+                      item.status === 'activated' ? 'bg-blue-500 text-black' :
+                      'bg-green-500 text-black'
                     }`}>
                       {item.status.toUpperCase()}
                     </span>
@@ -598,7 +598,7 @@ export const IncidentAnimation = () => {
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
                       <span className="text-gray-400">ID:</span>
-                      <span className="text-white font-mono">{item.id}</span>
+                      <span className="text-black font-mono">{item.id}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Location:</span>
@@ -676,7 +676,7 @@ export const IncidentAnimation = () => {
                 <div key={person.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h4 className="text-white font-semibold">{person.name}</h4>
+                      <h4 className="text-black font-semibold">{person.name}</h4>
                       <p className="text-gray-400 text-sm">{person.role}</p>
                     </div>
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">
@@ -717,7 +717,7 @@ export const IncidentAnimation = () => {
                 </div>
                 <div className={`w-3 h-3 rounded-full mt-1 flex-shrink-0 ${getStatusColor(event.status)}`} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-medium text-sm">{event.label}</p>
+                  <p className="text-black font-medium text-sm">{event.label}</p>
                   <p className="text-gray-400 text-xs mt-1">{event.description}</p>
                   {event.equipment && event.equipment.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
@@ -763,7 +763,7 @@ export const IncidentAnimation = () => {
               <AlertTriangle className="w-6 h-6 text-red-400" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-white">{metadata.totalSpillVolume}</div>
+              <div className="text-2xl font-bold text-black">{metadata.totalSpillVolume}</div>
               <div className="text-gray-400 text-sm">Spilled</div>
             </div>
           </div>
@@ -772,7 +772,7 @@ export const IncidentAnimation = () => {
               <Droplets className="w-6 h-6 text-green-400" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-white">{metadata.recoveredVolume}</div>
+              <div className="text-2xl font-bold text-black">{metadata.recoveredVolume}</div>
               <div className="text-gray-400 text-sm">Recovered</div>
             </div>
           </div>
@@ -781,7 +781,7 @@ export const IncidentAnimation = () => {
               <Clock className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-white">{metadata.containmentTime}</div>
+              <div className="text-2xl font-bold text-black">{metadata.containmentTime}</div>
               <div className="text-gray-400 text-sm">Containment</div>
             </div>
           </div>
@@ -790,7 +790,7 @@ export const IncidentAnimation = () => {
               <Users className="w-6 h-6 text-purple-400" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-white">{personnel.reduce((sum, p) => sum + p.count, 0)}</div>
+              <div className="text-2xl font-bold text-black">{personnel.reduce((sum, p) => sum + p.count, 0)}</div>
               <div className="text-gray-400 text-sm">Personnel</div>
             </div>
           </div>

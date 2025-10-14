@@ -195,3 +195,86 @@ export const incidentAnimationScript = {
     estimatedCost: "SGD 258,000"
   }
 };
+export const mitigationAnimationScript = {
+  emergencyResponse: {
+    timeline: [
+      {
+        timestamp: "T+0 min",
+        action: "Incident Detected",
+        description: "Coupling failure at TP-3A, oil spill initiated on jetty apron",
+        status: "detected",
+        personnel: ["Operator Hassan"]
+      },
+      {
+        timestamp: "T+2 min",
+        action: "Emergency Shutdown Activated",
+        description: "ESD button activated by Operator Hassan, transfer halted",
+        status: "response",
+        personnel: ["Operator Hassan"]
+      },
+      {
+        timestamp: "T+3 min",
+        action: "Vessel Isolation",
+        description: "Ship's manifold valve closed by MT Aurora crew",
+        status: "isolation",
+        personnel: ["MT Aurora Crew"]
+      },
+      {
+        timestamp: "T+5 min",
+        action: "ERT Mobilized",
+        description: "Emergency Response Team dispatched to incident site",
+        status: "mobilization",
+        personnel: ["ERT Leader Zahid", "ERT Team (6 members)"]
+      },
+      {
+        timestamp: "T+7 min",
+        action: "Boom Deployment Initiated",
+        description: "First containment boom deployed around spill perimeter",
+        status: "containment",
+        personnel: ["ERT Team"]
+      },
+      {
+        timestamp: "T+12 min",
+        action: "Spill Fully Contained",
+        description: "Oil spill contained within boom perimeter, no marine pollution",
+        status: "contained",
+        personnel: ["ERT Team"]
+      },
+      {
+        timestamp: "T+18 min",
+        action: "MPA Notification",
+        description: "Maritime and Port Authority notified via phone",
+        status: "reporting",
+        personnel: ["Supervisor Wong"]
+      },
+      {
+        timestamp: "T+25 min",
+        action: "NEA Notification",
+        description: "National Environment Agency notified via online portal",
+        status: "reporting",
+        personnel: ["HSE Officer Priya"]
+      },
+      {
+        timestamp: "T+45 min",
+        action: "Vacuum Truck Cleanup",
+        description: "Spilltech Solutions begins oil recovery operations",
+        status: "recovery",
+        personnel: ["Spilltech Contractor"]
+      },
+      {
+        timestamp: "T+3.5 hrs",
+        action: "Recovery Complete",
+        description: "Bulk oil recovery completed, 280L recovered (87% recovery rate)",
+        status: "complete",
+        personnel: ["Spilltech Contractor"]
+      }
+    ],
+    successMetrics: {
+      containmentTime: "12 minutes",
+      recoveryRate: "87%",
+      injuries: 0,
+      marinePollution: "None",
+      responseTime: "2 minutes"
+    }
+  }
+};
