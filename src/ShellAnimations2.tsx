@@ -631,8 +631,8 @@ export const SolutionAnimation = () => {
                         index === currentStepIndex 
                           ? 'bg-green-500 text-black' 
                           : index < currentStepIndex 
-                            ? 'bg-green-700 text-white' 
-                            : 'bg-gray-700 text-gray-400'
+                            ? 'bg-green-700 text-black' 
+                            : 'bg-black-700 text-black-400'
                       }`}>
                         {index + 1}
                       </div>
