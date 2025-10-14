@@ -396,7 +396,7 @@ export const IncidentAnimation = () => {
               <Droplets className="w-6 h-6 text-black" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-black">Incident Reconstruction</h2>
+              <h2 className="text-2xl font-bold text-black">Incident 3D Reconstruction</h2>
               <p className="text-gray-300 text-black">{metadata.reportId} - {metadata.location}</p>
             </div>
           </div>
@@ -447,7 +447,7 @@ export const IncidentAnimation = () => {
         </div>
         
         {/* Progress bar */}
-        <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="mt-3 h-2 bg-gray-700 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
             style={{ width: `${((currentStepIndex + 1) / timeline.length) * 100}%` }}
