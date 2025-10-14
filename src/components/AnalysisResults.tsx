@@ -628,87 +628,21 @@ export function AnalysisResults({ files, onClose }: AnalysisResultsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg relative overflow-hidden group">
+          
                     {/* NEW: Attach the ref and event handlers to the video element */}
             <IncidentAnimation/>
                 
                 {/* Video Placeholder Area (conditionally rendered or styled to hide when playing) */}
-            {!isPlaying && (
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="w-20 h-20 mx-auto bg-primary/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-primary/30 cursor-pointer hover:bg-primary/30 transition-all" onClick={togglePlayback}>
-                    <Play className="w-10 h-10 text-white ml-1" />
-                  </div>
-                  <div className="text-white space-y-1">
-                    <p className="text-slate-200 text-sm">Click the controls below to interact with the reconstruction</p>
-                  </div>
-                </div>
-              </div>
-            )}
+            
 
                  {/* Equipment markers overlay */}
-            <div className="absolute top-4 left-4">
-              <div className="bg-black/60 backdrop-blur-sm rounded-lg p-2 text-white text-xs">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                  <span>Pump Unit B-23</span>
-                </div>
-              </div>
-            </div>
+           
 
-                 {/* Video Controls Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              {/* Progress Bar */}
-              <div className="mb-3">
-                <Slider
-                  value={[currentTime]}
-                  onValueChange={handleSeek} // NEW: Use the seek handler
-                  max={duration}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-white/80 mt-1">
-                  <span>{formatTime(currentTime)}</span>
-                  <span>{formatTime(duration)}</span>
-                </div>
-              </div>
+                
 
-                  {/* Control Buttons */}
-                   <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                    <SkipBack className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2" onClick={togglePlayback}>
-                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                  </Button>
-                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                    <SkipForward className="w-4 h-4" />
-                  </Button>
-                      
-                      <div className="flex items-center space-x-2 ml-4">
-                    <Volume2 className="w-4 h-4 text-white" />
-                    <Slider
-                      value={[volume]}
-                      onValueChange={(vals: number[]) => setVolume(vals[0] ?? 0)}
-                      max={100}
-                      step={1}
-                      className="w-20"
-                    />
-                  </div>
-                </div>
-
-                    <div className="flex items-center space-x-2">
-                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 p-2">
-                    <Maximize className="w-4 h-4" />
-                  </Button>
-                </div>
-                  </div>
-                </div>
-              </div>
+                    
+                  
+              
               
               {/* Interactive Control Panels */}
               <div className="mt-6 space-y-4">

@@ -441,13 +441,13 @@ export const IncidentAnimation = () => {
               <p className="text-gray-300 text-sm">{currentStep?.description}</p>
             </div>
           </div>
-          <div className={`ml-4 px-3 py-1 rounded-full text-xs font-semibold text-white ${getStatusColor(currentStep?.status || 'normal')}`}>
+          <div className={`ml-4 px-3 py-1 rounded-full text-xs font-semibold text-black ${getStatusColor(currentStep?.status || 'normal')}`}>
             {currentStep?.status?.toUpperCase()}
           </div>
         </div>
         
         {/* Progress bar */}
-        <div className="mt-3 h-2 bg-gray-700 rounded-full overflow-hidden">
+        <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
             style={{ width: `${((currentStepIndex + 1) / timeline.length) * 100}%` }}
@@ -574,7 +574,7 @@ export const IncidentAnimation = () => {
             <div className="flex items-center space-x-3">
               <Wrench className="w-5 h-5 text-orange-400" />
               <div className="text-left">
-                <h3 className="text-white font-semibold">Equipment Status</h3>
+                <h3 className="text-black font-semibold">Equipment Status</h3>
                 <p className="text-gray-400 text-sm">{equipment.length} critical components tracked</p>
               </div>
             </div>
@@ -586,7 +586,7 @@ export const IncidentAnimation = () => {
               {equipment.map((item) => (
                 <div key={item.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                   <div className="flex items-start justify-between mb-3">
-                    <h4 className="text-white font-semibold text-sm">{item.name}</h4>
+                    <h4 className="text-black font-semibold text-sm">{item.name}</h4>
                     <span className={`px-2 py-1 rounded text-xs font-semibold ${
                       item.status === 'failed' ? 'bg-red-500 text-white' :
                       item.status === 'activated' ? 'bg-blue-500 text-white' :
@@ -602,12 +602,12 @@ export const IncidentAnimation = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Location:</span>
-                      <span className="text-white">{item.location}</span>
+                      <span className="text-black">{item.location}</span>
                     </div>
                     {item.serviceLife && (
                       <div className="flex justify-between">
                         <span className="text-gray-400">Service Life:</span>
-                        <span className="text-white">{item.serviceLife}</span>
+                        <span className="text-black">{item.serviceLife}</span>
                       </div>
                     )}
                     {item.actualAge && (
@@ -663,7 +663,7 @@ export const IncidentAnimation = () => {
             <div className="flex items-center space-x-3">
               <Users className="w-5 h-5 text-blue-400" />
               <div className="text-left">
-                <h3 className="text-white font-semibold">Personnel Involvement</h3>
+                <h3 className="text-black font-semibold">Personnel Involvement</h3>
                 <p className="text-gray-400 text-sm">{personnel.reduce((sum, p) => sum + p.count, 0)} personnel across {personnel.length} teams</p>
               </div>
             </div>
@@ -702,7 +702,7 @@ export const IncidentAnimation = () => {
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
           <div className="flex items-center space-x-2 mb-4">
             <Clock className="w-5 h-5 text-purple-400" />
-            <h3 className="text-white font-semibold">Complete Timeline</h3>
+            <h3 className="text-black font-semibold">Complete Timeline</h3>
           </div>
           <div className="space-y-3">
             {timeline.map((event, index) => (
