@@ -273,7 +273,61 @@ const PersonnelMarker = ({ position, color, label }: PersonnelMarkerProps) => (
     <Label position={[0, 2.2, 0]} fontSize={0.3}>{label}</Label>
   </group>
 );
+// Camera controller component
+const CameraController = ({ targetPosition, targetLookAt }: { 
+  targetPosition: [number, number, number]; 
+  targetLookAt: [number, number, number] 
+}) => {
+  useFrame((state) => {
+    // Smoothly interpolate camera position
+    state.camera.position.lerp(
+      new THREE.Vector3(...targetPosition),
+      0.05
+    );
+    
+    // Smoothly interpolate camera lookAt
+    const lookAtVector = new THREE.Vector3(...targetLookAt);
+    const currentLookAt = new THREE.Vector3();
+    state.camera.getWorldDirection(currentLookAt);
+    currentLookAt.multiplyScalar(10).add(state.camera.position);
+    currentLookAt.lerp(lookAtVector, 0.05);
+    state.camera.lookAt(currentLookAt);
+  });
 
+  return null;
+};
+
+// Define camera angles for different events
+const cameraAngles = {
+  vesselApproach: { 
+    position: [-8, 8, 20] as [number, number, number], 
+    lookAt: [-8, 0, 0] as [number, number, number] 
+  },
+  pressureSpike: { 
+    position: [5, 4, 8] as [number, number, number], 
+    lookAt: [2, 1.5, 0] as [number, number, number] 
+  },
+  couplingFailure: { 
+    position: [3, 3, 5] as [number, number, number], 
+    lookAt: [2, 1.5, 0] as [number, number, number] 
+  },
+  esdActivation: { 
+    position: [10, 6, 10] as [number, number, number], 
+    lookAt: [8, 1.5, 0] as [number, number, number] 
+  },
+  boomDeployment: { 
+    position: [2, 15, 2] as [number, number, number], 
+    lookAt: [2, 0, 0] as [number, number, number] 
+  },
+  spillContained: { 
+    position: [2, 12, 15] as [number, number, number], 
+    lookAt: [2, 0, 0] as [number, number, number] 
+  },
+  overview: { 
+    position: [18, 12, 18] as [number, number, number], 
+    lookAt: [0, 0, 0] as [number, number, number] 
+  }
+};
 // Main Component
 export const IncidentAnimation = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -289,27 +343,37 @@ export const IncidentAnimation = () => {
   const [personnelVisible, setPersonnelVisible] = useState<{[key: string]: boolean}>({});
   const [showEquipmentPanel, setShowEquipmentPanel] = useState(false);
   const [showPersonnelPanel, setShowPersonnelPanel] = useState(false);
-
+  const [cameraPosition, setCameraPosition] = useState<[number, number, number]>(cameraAngles.overview.position);
+  const [cameraLookAt, setCameraLookAt] = useState<[number, number, number]>(cameraAngles.overview.lookAt);
+  const [autoCameraEnabled, setAutoCameraEnabled] = useState(true);
   const { timeline, metadata, equipment, personnel } = incidentAnimationScript;
   const currentStep = timeline[currentStepIndex];
 
-  const runAnimation = async () => {
+ const runAnimation = async () => {
     setIsPlaying(true);
     setCurrentStepIndex(0);
     resetAnimation();
 
-    // Step 0: Vessel approaching
+    // Step 0: Vessel approaching - Camera focuses on vessel
     setCurrentStepIndex(0);
+    setCameraPosition(cameraAngles.vesselApproach.position);
+    setCameraLookAt(cameraAngles.vesselApproach.lookAt);
     setPersonnelVisible({ vessel: true, terminal: true });
     for (let i = 0; i <= 50; i++) {
       await new Promise(res => setTimeout(res, 80));
       const progress = i / 50;
       setVesselPosition([-15 + progress * 13, 0, 0]);
+      // Update camera lookAt to follow vessel
+      if (autoCameraEnabled) {
+        setCameraLookAt([-15 + progress * 13, 0, 0]);
+      }
     }
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 1: Pressure spike
+    // Step 1: Pressure spike - Close up on coupling
     setCurrentStepIndex(1);
+    setCameraPosition(cameraAngles.pressureSpike.position);
+    setCameraLookAt(cameraAngles.pressureSpike.lookAt);
     setWarningActive(true);
     for (let i = 0; i < 5; i++) {
       setCouplingScale(1.3);
@@ -319,8 +383,10 @@ export const IncidentAnimation = () => {
     }
     await new Promise(res => setTimeout(res, 1500));
 
-    // Step 2: Coupling failure & spill
+    // Step 2: Coupling failure & spill - Very close view
     setCurrentStepIndex(2);
+    setCameraPosition(cameraAngles.couplingFailure.position);
+    setCameraLookAt(cameraAngles.couplingFailure.lookAt);
     setCouplingBroken(true);
     setCouplingRotation([0, 0, 0.3]);
     setSpillVisible(true);
@@ -330,26 +396,34 @@ export const IncidentAnimation = () => {
     }
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 3: ESD activated
+    // Step 3: ESD activated - Focus on control room
     setCurrentStepIndex(3);
+    setCameraPosition(cameraAngles.esdActivation.position);
+    setCameraLookAt(cameraAngles.esdActivation.lookAt);
     setSpillIntensity(0.6);
     await new Promise(res => setTimeout(res, 2500));
 
-    // Step 4: Boom deployment
+    // Step 4: Boom deployment - Aerial view
     setCurrentStepIndex(4);
+    setCameraPosition(cameraAngles.boomDeployment.position);
+    setCameraLookAt(cameraAngles.boomDeployment.lookAt);
     setPersonnelVisible(prev => ({ ...prev, emergency: true }));
     setBoomDeployed(true);
     await new Promise(res => setTimeout(res, 2500));
 
-    // Step 5: Contained
+    // Step 5: Contained - Wide angle showing containment
     setCurrentStepIndex(5);
+    setCameraPosition(cameraAngles.spillContained.position);
+    setCameraLookAt(cameraAngles.spillContained.lookAt);
     setWarningActive(false);
     setSpillIntensity(0.3);
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 6-8: Notifications and recovery
+    // Step 6-8: Notifications and recovery - Overview
     for (let i = 6; i < timeline.length; i++) {
       setCurrentStepIndex(i);
+      setCameraPosition(cameraAngles.overview.position);
+      setCameraLookAt(cameraAngles.overview.lookAt);
       await new Promise(res => setTimeout(res, 2000));
     }
 
@@ -367,6 +441,8 @@ export const IncidentAnimation = () => {
     setBoomDeployed(false);
     setWarningActive(false);
     setPersonnelVisible({});
+     setCameraPosition(cameraAngles.overview.position);
+    setCameraLookAt(cameraAngles.overview.lookAt);
   };
 
   const handleReset = () => {
@@ -424,6 +500,16 @@ export const IncidentAnimation = () => {
             >
               <RotateCcw className="w-5 h-5" />
             </button>
+            <button
+              onClick={() => setAutoCameraEnabled(!autoCameraEnabled)}
+              className={`px-3 py-2 rounded-lg transition-all text-sm font-medium ${
+                autoCameraEnabled 
+                  ? 'bg-green-600 hover:bg-green-700 text-black' 
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              }`}
+            >
+              Auto Camera: {autoCameraEnabled ? 'ON' : 'OFF'}
+            </button>
           </div>
         </div>
       </div>
@@ -469,7 +555,13 @@ export const IncidentAnimation = () => {
           <directionalLight position={[15, 25, 15]} intensity={1.2} castShadow />
           <pointLight position={[-15, 15, -15]} intensity={0.6} color="#4a90e2" />
           <fog attach="fog" args={['#000000', 35, 70]} />
-          
+            {/* ADD THIS: Camera Controller - only active when auto camera is enabled */}
+          {autoCameraEnabled && (
+            <CameraController 
+              targetPosition={cameraPosition} 
+              targetLookAt={cameraLookAt} 
+            />
+          )}
           <Ocean />
           <Vessel position={vesselPosition} />
           <Jetty />
@@ -492,6 +584,7 @@ export const IncidentAnimation = () => {
           
           <gridHelper args={[50, 50, '#333333', '#1a1a1a']} position={[0, -0.5, 0]} />
           <OrbitControls 
+            enabled={!autoCameraEnabled} 
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
@@ -500,69 +593,140 @@ export const IncidentAnimation = () => {
             maxDistance={40}
           />
         </Canvas>
-        
-        {/* Legend */}
-        <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700 text-xs">
-          <h3 className="text-white font-semibold mb-2">Legend</h3>
-          <div className="space-y-1.5">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gray-500 rounded" />
-              <span className="text-gray-300">MT Aurora</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-orange-500 rounded" />
-              <span className="text-gray-300">Transfer System</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-500 rounded" />
-              <span className="text-gray-300">Coupling (Failed)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-black rounded border border-gray-500" />
-              <span className="text-gray-300">Oil Spill (320L)</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-400 rounded" />
-              <span className="text-gray-300">Containment Boom</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded" />
-              <span className="text-gray-300">Vessel Crew</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded" />
-              <span className="text-gray-300">Emergency Team</span>
-            </div>
-          </div>
+      
+      </div>
+{/* Legend + Incident Info (now above Equipment Status) */}
+<div className="px-6 pt-4 bg-gray-900/40 border-t border-gray-800">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    {/* Legend card */}
+    <div className="lg:col-span-2 bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700">
+      <h3 className="text-black font-semibold mb-2">Legend</h3>
+      <div className="space-y-1.5 text-xs">
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-gray-500 rounded" />
+          <span className="text-gray-300">MT Aurora</span>
         </div>
-
-        {/* Incident Info Overlay */}
-        <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700 max-w-xs">
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Date:</span>
-              <span className="text-black font-medium">{metadata.incidentDate}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Severity:</span>
-              <span className="text-red-400 font-semibold">{metadata.severity}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Spill Volume:</span>
-              <span className="text-black font-medium">{metadata.totalSpillVolume}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Recovered:</span>
-              <span className="text-green-400 font-medium">{metadata.recoveredVolume}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Injuries:</span>
-              <span className="text-green-400 font-medium">{metadata.injuries}</span>
-            </div>
-          </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-orange-500 rounded" />
+          <span className="text-gray-300">Transfer System</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-yellow-500 rounded" />
+          <span className="text-gray-300">Coupling (Failed)</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-black rounded border border-gray-500" />
+          <span className="text-gray-300">Oil Spill (320L)</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-yellow-400 rounded" />
+          <span className="text-gray-300">Containment Boom</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-blue-500 rounded" />
+          <span className="text-gray-300">Vessel Crew</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-red-500 rounded" />
+          <span className="text-gray-300">Emergency Team</span>
         </div>
       </div>
 
+      {/* Optional: small auto-camera badge lives here now */}
+      {autoCameraEnabled && (
+        <div className="mt-3 inline-flex items-start gap-2 bg-black/60 border border-green-700 rounded-lg p-2">
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mt-1" />
+          <div>
+            <div className="text-xs text-green-400 font-semibold">AUTO CAMERA ACTIVE</div>
+            <p className="text-[10px] text-gray-400">Following event sequence</p>
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Incident info card */}
+    <div className="bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700">
+      <h3 className="text-black font-semibold mb-3 text-sm">Incident Info</h3>
+      <div className="space-y-2 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Date:</span>
+          <span className="text-black font-medium">{metadata.incidentDate}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Severity:</span>
+          <span className="text-red-400 font-semibold">{metadata.severity}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Spill Volume:</span>
+          <span className="text-black font-medium">{metadata.totalSpillVolume}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Recovered:</span>
+          <span className="text-green-400 font-medium">{metadata.recoveredVolume}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Injuries:</span>
+          <span className="text-green-400 font-medium">{metadata.injuries}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/* Timeline Summary */}
+        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+          <div className="flex items-center space-x-2 mb-4">
+            <Clock className="w-5 h-5 text-purple-400" />
+            <h3 className="text-black font-semibold">Complete Timeline</h3>
+          </div>
+          <div className="space-y-3">
+            {timeline.map((event, index) => (
+              <div 
+                key={index} 
+                className={`flex items-start space-x-4 p-3 rounded-lg transition-all ${
+                  index === currentStepIndex ? 'bg-blue-500/20 border border-blue-500/40' : 'bg-gray-900/50'
+                }`}
+              >
+                <div className="flex-shrink-0 w-20 text-right">
+                  <span className="text-gray-400 text-xs font-mono">{event.timestamp}</span>
+                </div>
+                <div className={`w-3 h-3 rounded-full mt-1 flex-shrink-0 ${getStatusColor(event.status)}`} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-black font-medium text-sm">{event.label}</p>
+                  <p className="text-gray-400 text-xs mt-1">{event.description}</p>
+                  {event.equipment && event.equipment.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {event.equipment.map((eq, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded text-xs border border-orange-500/30">
+                          {eq}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {event.personnel && event.personnel.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {event.personnel.map((person, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs border border-blue-500/30">
+                          {person}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {event.spillVolume && (
+                    <div className="mt-2 flex items-center space-x-2">
+                      <AlertTriangle className="w-3 h-3 text-red-400" />
+                      <span className="text-red-400 text-xs font-semibold">Spill: {event.spillVolume}</span>
+                    </div>
+                  )}
+                  {event.recoveredVolume && (
+                    <div className="mt-1 flex items-center space-x-2">
+                      <span className="text-green-400 text-xs font-semibold">Recovered: {event.recoveredVolume}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       {/* Equipment & Personnel Panels */}
       <div className="p-6 space-y-4 bg-gray-800/30">
         {/* Equipment Panel */}
@@ -698,61 +862,7 @@ export const IncidentAnimation = () => {
           )}
         </div>
 
-        {/* Timeline Summary */}
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="flex items-center space-x-2 mb-4">
-            <Clock className="w-5 h-5 text-purple-400" />
-            <h3 className="text-black font-semibold">Complete Timeline</h3>
-          </div>
-          <div className="space-y-3">
-            {timeline.map((event, index) => (
-              <div 
-                key={index} 
-                className={`flex items-start space-x-4 p-3 rounded-lg transition-all ${
-                  index === currentStepIndex ? 'bg-blue-500/20 border border-blue-500/40' : 'bg-gray-900/50'
-                }`}
-              >
-                <div className="flex-shrink-0 w-20 text-right">
-                  <span className="text-gray-400 text-xs font-mono">{event.timestamp}</span>
-                </div>
-                <div className={`w-3 h-3 rounded-full mt-1 flex-shrink-0 ${getStatusColor(event.status)}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-black font-medium text-sm">{event.label}</p>
-                  <p className="text-gray-400 text-xs mt-1">{event.description}</p>
-                  {event.equipment && event.equipment.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {event.equipment.map((eq, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded text-xs border border-orange-500/30">
-                          {eq}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {event.personnel && event.personnel.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {event.personnel.map((person, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs border border-blue-500/30">
-                          {person}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {event.spillVolume && (
-                    <div className="mt-2 flex items-center space-x-2">
-                      <AlertTriangle className="w-3 h-3 text-red-400" />
-                      <span className="text-red-400 text-xs font-semibold">Spill: {event.spillVolume}</span>
-                    </div>
-                  )}
-                  {event.recoveredVolume && (
-                    <div className="mt-1 flex items-center space-x-2">
-                      <span className="text-green-400 text-xs font-semibold">Recovered: {event.recoveredVolume}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        
       </div>
 
       {/* Summary Footer */}
@@ -796,15 +906,6 @@ export const IncidentAnimation = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-// Keep MitigationAnimation separate (placeholder for now)
-export const MitigationAnimation = () => {
-  return (
-    <div className="w-full bg-gray-900 rounded-xl p-6 border border-gray-700 mt-8">
-      <p className="text-gray-400 text-center">Mitigation animation will be developed separately</p>
     </div>
   );
 };

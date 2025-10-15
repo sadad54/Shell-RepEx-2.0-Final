@@ -302,6 +302,73 @@ const WarningLight = ({ active, position }: { active: boolean; position: [number
     </group>
   );
 };
+// Camera controller component
+const CameraController = ({ targetPosition, targetLookAt }: { 
+  targetPosition: [number, number, number]; 
+  targetLookAt: [number, number, number] 
+}) => {
+  useFrame((state) => {
+    // Smoothly interpolate camera position
+    state.camera.position.lerp(
+      new THREE.Vector3(...targetPosition),
+      0.05
+    );
+    
+    // Smoothly interpolate camera lookAt
+    const lookAtVector = new THREE.Vector3(...targetLookAt);
+    const currentLookAt = new THREE.Vector3();
+    state.camera.getWorldDirection(currentLookAt);
+    currentLookAt.multiplyScalar(10).add(state.camera.position);
+    currentLookAt.lerp(lookAtVector, 0.05);
+    state.camera.lookAt(currentLookAt);
+  });
+
+  return null;
+};
+
+// Define camera angles for different solution events
+const solutionCameraAngles = {
+  incidentDetected: { 
+    position: [5, 4, 8] as [number, number, number], 
+    lookAt: [2, 1.5, 0] as [number, number, number] 
+  },
+  esdActivation: { 
+    position: [10, 6, 10] as [number, number, number], 
+    lookAt: [8, 1.5, 2] as [number, number, number] 
+  },
+  vesselIsolation: { 
+    position: [-5, 8, 12] as [number, number, number], 
+    lookAt: [-2, 0, 0] as [number, number, number] 
+  },
+  ertMobilization: { 
+    position: [8, 10, 15] as [number, number, number], 
+    lookAt: [4, 0, 0] as [number, number, number] 
+  },
+  boomDeployment: { 
+    position: [2, 18, 2] as [number, number, number], 
+    lookAt: [2, 0, 0] as [number, number, number] 
+  },
+  spillContained: { 
+    position: [2, 15, 18] as [number, number, number], 
+    lookAt: [2, 0, 0] as [number, number, number] 
+  },
+  notifications: { 
+    position: [12, 8, 12] as [number, number, number], 
+    lookAt: [8, 0, 0] as [number, number, number] 
+  },
+  vacuumCleanup: { 
+    position: [5, 6, -10] as [number, number, number], 
+    lookAt: [3, 0, -6] as [number, number, number] 
+  },
+  recoveryComplete: { 
+    position: [18, 12, 18] as [number, number, number], 
+    lookAt: [0, 0, 0] as [number, number, number] 
+  },
+  overview: { 
+    position: [18, 12, 18] as [number, number, number], 
+    lookAt: [0, 0, 0] as [number, number, number] 
+  }
+};
 export const SolutionAnimation = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -318,7 +385,9 @@ export const SolutionAnimation = () => {
   const [recoveryProgress, setRecoveryProgress] = useState(0);
   const [warningActive, setWarningActive] = useState(false);
   const [showPersonnelPanel, setShowPersonnelPanel] = useState(false);
-
+ const [cameraPosition, setCameraPosition] = useState<[number, number, number]>(solutionCameraAngles.overview.position);
+  const [cameraLookAt, setCameraLookAt] = useState<[number, number, number]>(solutionCameraAngles.overview.lookAt);
+  const [autoCameraEnabled, setAutoCameraEnabled] = useState(true);
   const { emergencyResponse } = mitigationAnimationScript;
   const timeline = emergencyResponse.timeline;
   const currentStep = timeline[currentStepIndex];
@@ -327,30 +396,40 @@ export const SolutionAnimation = () => {
     setIsPlaying(true);
     resetAnimation();
 
-    // Step 0: Incident detected
+    // Step 0: Incident detected - Close view of spill
     setCurrentStepIndex(0);
+    setCameraPosition(solutionCameraAngles.incidentDetected.position);
+    setCameraLookAt(solutionCameraAngles.incidentDetected.lookAt);
     setSpillVisible(true);
     setOperatorActive(true);
     setWarningActive(true);
     await new Promise(res => setTimeout(res, 2500));
 
-    // Step 1: ESD Activated (T+2 minutes)
+    // Step 1: ESD Activated - Focus on ESD button
     setCurrentStepIndex(1);
+    setCameraPosition(solutionCameraAngles.esdActivation.position);
+    setCameraLookAt(solutionCameraAngles.esdActivation.lookAt);
     setEsdActivated(true);
     await new Promise(res => setTimeout(res, 2500));
 
-    // Step 2: Vessel Isolation (T+3 minutes)
+    // Step 2: Vessel Isolation - View of vessel
     setCurrentStepIndex(2);
+    setCameraPosition(solutionCameraAngles.vesselIsolation.position);
+    setCameraLookAt(solutionCameraAngles.vesselIsolation.lookAt);
     setVesselCrewActive(true);
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 3: ERT Mobilized (T+5 minutes)
+    // Step 3: ERT Mobilized - Wide view showing personnel
     setCurrentStepIndex(3);
+    setCameraPosition(solutionCameraAngles.ertMobilization.position);
+    setCameraLookAt(solutionCameraAngles.ertMobilization.lookAt);
     setErtActive(true);
     await new Promise(res => setTimeout(res, 2500));
 
-    // Step 4: Boom Deployment Starts (T+7 minutes)
+    // Step 4: Boom Deployment - Aerial view
     setCurrentStepIndex(4);
+    setCameraPosition(solutionCameraAngles.boomDeployment.position);
+    setCameraLookAt(solutionCameraAngles.boomDeployment.lookAt);
     setBoomDeployed(true);
     for (let i = 0; i <= 20; i++) {
       await new Promise(res => setTimeout(res, 100));
@@ -358,23 +437,29 @@ export const SolutionAnimation = () => {
     }
     await new Promise(res => setTimeout(res, 1000));
 
-    // Step 5: Spill Contained (T+12 minutes)
+    // Step 5: Spill Contained - Wide angle of containment
     setCurrentStepIndex(5);
+    setCameraPosition(solutionCameraAngles.spillContained.position);
+    setCameraLookAt(solutionCameraAngles.spillContained.lookAt);
     setSpillContained(true);
     setWarningActive(false);
     await new Promise(res => setTimeout(res, 2500));
 
-    // Step 6: MPA Notification (T+18 minutes)
+    // Step 6: MPA Notification - View of jetty/control
     setCurrentStepIndex(6);
+    setCameraPosition(solutionCameraAngles.notifications.position);
+    setCameraLookAt(solutionCameraAngles.notifications.lookAt);
     setSupervisorActive(true);
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 7: NEA Notification (T+25 minutes)
+    // Step 7: NEA Notification
     setCurrentStepIndex(7);
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 8: Vacuum Truck Cleanup (T+45 minutes)
+    // Step 8: Vacuum Truck Cleanup - Focus on truck
     setCurrentStepIndex(8);
+    setCameraPosition(solutionCameraAngles.vacuumCleanup.position);
+    setCameraLookAt(solutionCameraAngles.vacuumCleanup.lookAt);
     setVacuumTruckActive(true);
     for (let i = 0; i <= 20; i++) {
       await new Promise(res => setTimeout(res, 150));
@@ -382,8 +467,10 @@ export const SolutionAnimation = () => {
     }
     await new Promise(res => setTimeout(res, 2000));
 
-    // Step 9: Recovery Complete (T+3.5 hours)
+    // Step 9: Recovery Complete - Overview
     setCurrentStepIndex(9);
+    setCameraPosition(solutionCameraAngles.recoveryComplete.position);
+    setCameraLookAt(solutionCameraAngles.recoveryComplete.lookAt);
     await new Promise(res => setTimeout(res, 2500));
 
     setIsPlaying(false);
@@ -403,6 +490,8 @@ export const SolutionAnimation = () => {
     setVacuumTruckActive(false);
     setRecoveryProgress(0);
     setWarningActive(false);
+    setCameraPosition(solutionCameraAngles.overview.position);
+    setCameraLookAt(solutionCameraAngles.overview.lookAt);
   };
 
   const handleReset = () => {
@@ -463,6 +552,16 @@ export const SolutionAnimation = () => {
             >
               <RotateCcw className="w-5 h-5" />
             </button>
+            <button
+              onClick={() => setAutoCameraEnabled(!autoCameraEnabled)}
+              className={`px-3 py-2 rounded-lg transition-all text-sm font-medium ${
+                autoCameraEnabled 
+                  ? 'bg-green-600 hover:bg-green-700 text-black' 
+                  : 'bg-gray-700 hover:bg-gray-600 text-black'
+              }`}
+            >
+              Auto Camera: {autoCameraEnabled ? 'ON' : 'OFF'}
+            </button>
           </div>
         </div>
       </div>
@@ -507,7 +606,13 @@ export const SolutionAnimation = () => {
           <directionalLight position={[15, 25, 15]} intensity={1.2} castShadow />
           <pointLight position={[-15, 15, -15]} intensity={0.6} color="#4a90e2" />
           <fog attach="fog" args={['#000000', 35, 70]} />
-          
+          {/* ADD THIS: Camera Controller */}
+          {autoCameraEnabled && (
+            <CameraController 
+              targetPosition={cameraPosition} 
+              targetLookAt={cameraLookAt} 
+            />
+          )}
           <Ocean />
           <Vessel position={[-2, 0, 0]} />
           <Jetty />
@@ -530,6 +635,7 @@ export const SolutionAnimation = () => {
           
           <gridHelper args={[50, 50, '#333333', '#1a1a1a']} position={[0, -0.5, 0]} />
           <OrbitControls 
+          enabled={!autoCameraEnabled}
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
@@ -539,63 +645,118 @@ export const SolutionAnimation = () => {
           />
         </Canvas>
         
-        {/* Legend */}
-        <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700 text-xs">
-          <h3 className="text-white font-semibold mb-2">Response Legend</h3>
-          <div className="space-y-1.5">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-orange-500 rounded" />
-              <span className="text-gray-300">Terminal Operator</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded" />
-              <span className="text-gray-300">Vessel Crew</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded" />
-              <span className="text-gray-300">Emergency Team</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-purple-500 rounded" />
-              <span className="text-gray-300">Supervisor</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-500 rounded" />
-              <span className="text-gray-300">Containment Boom</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gray-400 rounded" />
-              <span className="text-gray-300">Vacuum Truck</span>
-            </div>
-          </div>
-        </div>
+        
 
-        {/* Response Metrics */}
-        <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700 max-w-xs">
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">ESD Response:</span>
-              <span className="text-green-400 font-semibold">2 minutes</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Containment:</span>
-              <span className="text-green-400 font-semibold">12 minutes</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Recovery Rate:</span>
-              <span className="text-green-400 font-semibold">87% (280L/320L)</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Marine Impact:</span>
-              <span className="text-green-400 font-semibold">Zero</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Injuries:</span>
-              <span className="text-green-400 font-semibold">Zero</span>
-            </div>
-          </div>
+        {/* Response Legend + Metrics (moved from canvas) */}
+<div className="px-6 pt-4 bg-gray-900/40 border-t border-gray-800">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    {/* Response Legend card */}
+    <div className="lg:col-span-2 bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700">
+      <h3 className="text-black font-semibold mb-2">Response Legend</h3>
+      <div className="space-y-1.5 text-xs">
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-orange-500 rounded" />
+          <span className="text-gray-300">Terminal Operator</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-blue-500 rounded" />
+          <span className="text-gray-300">Vessel Crew</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-red-500 rounded" />
+          <span className="text-gray-300">Emergency Team</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-purple-500 rounded" />
+          <span className="text-gray-300">Supervisor</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-yellow-500 rounded" />
+          <span className="text-gray-300">Containment Boom</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 bg-gray-400 rounded" />
+          <span className="text-gray-300">Vacuum Truck</span>
         </div>
       </div>
+    </div>
+</div>
+
+    {/* Response Metrics card */}
+    <div className="bg-black/80 backdrop-blur-sm p-4 rounded-lg border border-gray-700">
+      <h3 className="text-black font-semibold mb-3 text-sm">Response Metrics</h3>
+      <div className="space-y-2 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">ESD Response:</span>
+          <span className="text-green-400 font-semibold">
+            {emergencyResponse.successMetrics.responseTime}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Containment:</span>
+          <span className="text-green-400 font-semibold">
+            {emergencyResponse.successMetrics.containmentTime}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Recovery Rate:</span>
+          <span className="text-green-400 font-semibold">
+            {emergencyResponse.successMetrics.recoveryRate}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Marine Impact:</span>
+          <span className="text-green-400 font-semibold">
+            {emergencyResponse.successMetrics.marinePollution}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-400">Injuries:</span>
+          <span className="text-green-400 font-semibold">
+            {emergencyResponse.successMetrics.injuries}
+          </span>
+        </div>
+      </div>
+    </div>
+     {/* ADD THIS: Camera Status card */}
+    <div className={`bg-black/80 backdrop-blur-sm p-4 rounded-lg border transition-all ${
+      autoCameraEnabled ? 'border-green-500' : 'border-gray-700'
+    }`}>
+      <h3 className="text-black font-semibold mb-3 text-sm">Camera Control</h3>
+      <div className="space-y-3">
+        {autoCameraEnabled ? (
+          <>
+            <div className="flex items-center space-x-2 p-2 bg-green-900/30 rounded">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0" />
+              <span className="text-green-400 font-semibold text-xs">AUTO CAMERA ACTIVE</span>
+            </div>
+            <p className="text-gray-400 text-xs leading-relaxed">
+              Camera is automatically following the emergency response sequence
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center space-x-2 p-2 bg-gray-700/30 rounded">
+              <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0" />
+              <span className="text-gray-400 font-semibold text-xs">MANUAL CONTROL</span>
+            </div>
+            <p className="text-gray-400 text-xs leading-relaxed">
+              Use mouse to rotate, zoom, and pan the 3D view
+            </p>
+          </>
+        )}
+        <div className="pt-2 border-t border-gray-700">
+          <p className="text-gray-500 text-xs">
+            Toggle in header to switch modes
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+        
 
       {/* Personnel Actions Panel */}
       <div className="p-6 space-y-4 bg-gray-800/30">
